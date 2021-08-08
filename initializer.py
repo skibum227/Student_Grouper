@@ -15,7 +15,7 @@ class Initializer(object):
         inputparser = argparse.ArgumentParser(description='Input params for Student Grouper...')
 
         # What period to run grouper on
-        inputparser.add_argument('--period', '-p', type=str, dest='period', action='store', 
+        inputparser.add_argument('--period', '-p', type=str, dest='period', action='store',
             default=None, required=True, help="Select period to group")
 
         # How many groups to make
@@ -23,16 +23,20 @@ class Initializer(object):
             default=3, help="Select number of groups")
 
         # Predict on an exact loan id
-        inputparser.add_argument('--distribute_leftovers', '-dl', dest='distrib_lo', action='store_true', 
+        inputparser.add_argument('--distribute_leftovers', '-dl', dest='distrib_lo', action='store_true',
             default=False, help='Flag to distribute leftover students into groups to preserve desired number')
 
         # Read in a different file
-        inputparser.add_argument('--student_ledger_file_name', '-fn', dest='filename', action='store', 
+        inputparser.add_argument('--student_ledger_file_name', '-fn', dest='filename', action='store',
             default='student_ledger.xlsx', help='File name of the formated xlsx file containing all student names and periods')
-        
-        # Read in a different file
-        inputparser.add_argument('--seed', '-seed', dest='seed', action='store', 
+
+        # Set random seed
+        inputparser.add_argument('--seed', '-seed', dest='seed', action='store',
             default=None, help='Set seed value for rand. num. generator so that groups dont change')
+
+        # Do not plot
+        inputparser.add_argument('--no_plot', '-np', dest='dont_plot', action='store_true',
+            default=False, help='For testing, turns off plotting')
 
         return vars(inputparser.parse_args())
 
@@ -55,7 +59,7 @@ if __name__ == '__main__':
 
     test = Initializer()
     test.print_params()
-    test.test_params()    
+    test.test_params()
 
 
 

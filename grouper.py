@@ -16,6 +16,7 @@ class Grouper(object):
         self.filename = params.get('filename')
 
         self.student_df = self._read_in_ledger()
+        self.group_deliniator = len(self.student_df) // self.gps
 
     def _read_in_ledger(self):
 
@@ -28,7 +29,7 @@ class Grouper(object):
     def _dont_distribute_leftovers(self, df):
 
         for x in range(len(df) % self.gps, 0, -1):
-                df.iloc[-x, df.columns.get_loc('student_group')] = self.gps
+                df.iloc[-x, df.columns.get_loc('student_group')] = self.group_deliniator
 
         return df
 
@@ -40,23 +41,22 @@ class Grouper(object):
         # Assigning Random number between 0 and 1
         np.random.seed(self.seed)
         df['num'] = [np.random.random() for x in range(len(df))]
-        # df['num'] = [np.random.random(self.seed) for x in range(len(df))]
 
         # Sort by the random value
         df = df.sort_values('num').reset_index(drop=True)
 
         # Assign the group
-        df['student_group'] = df.index % self.gps
+        df['student_group'] = df.index % self.group_deliniator
 
+        # Directs stragglers to there own, smaller group
         if not self.distrib_lo:
-            print('yeah')
             df = self._dont_distribute_leftovers(df)
 
         return df
 
     def print_student_groups(self, df):
 
-        for x in range(self.gps if self.distrib_lo else self.gps + 1):
+        for x in range(self.group_deliniator if self.distrib_lo else self.group_deliniator + 1):
             temp = df.loc[df.student_group.eq(x)]['student_names'].to_list()
             print(f'Group Number {x} ...')
             for y in temp:

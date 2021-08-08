@@ -8,8 +8,9 @@ This is the main runner of the grouping program.
 This is the website for plotly tables: https://plotly.com/python/table/
 
 To Do:
-    1). Make groups color matched
-    4). Make sure requirements is complete
+    1). Add flag for only if groups of 3 and 1 person left over, make 2 groups of 2
+    2). Make the student df only take students that are present (y)
+    3). Finish README
 """
 
 if __name__ == '__main__':

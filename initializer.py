@@ -31,7 +31,7 @@ class Initializer(object):
             default='student_ledger.xlsx', help='File name of the formated xlsx file containing all student names and periods')
 
         # Set random seed
-        inputparser.add_argument('--seed', '-seed', dest='seed', action='store',
+        inputparser.add_argument('--seed', '-s', dest='seed', action='store',
             default=None, help='Set seed value for rand. num. generator so that groups dont change')
 
         # Do not plot

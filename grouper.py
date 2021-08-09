@@ -21,8 +21,12 @@ class Grouper(object):
     def _read_in_ledger(self):
 
         df = pd.read_excel(self.filename, sheet_name=self.period)
+
+        # Only count students that are present
+        df = df[df.present.eq('y')]
+
         if df.empty:
-            raise "File name incorrect or file is missing"
+            raise "File name incorrect, file is missing, or no student is present"
         else:
             return df
 
@@ -49,6 +53,10 @@ class Grouper(object):
         df['student_group'] = df.index % self.group_deliniator
 
         # Directs stragglers to there own, smaller group
+        if self.gps == 3 and len(df) % self.gps == 1:
+            print(' !!! One person left over in groups of 3, making 2 groups of 2...')
+            df.iloc[0,3] = self.group_deliniator
+
         if not self.distrib_lo:
             df = self._dont_distribute_leftovers(df)
 

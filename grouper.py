@@ -52,10 +52,22 @@ class Grouper(object):
         # Assign the group
         df['student_group'] = df.index % self.group_deliniator
 
-        # Directs stragglers to there own, smaller group
-        if self.gps == 3 and len(df) % self.gps == 1:
-            print(' !!! One person left over in groups of 3, making 2 groups of 2...')
+        # Directs stragglers to there own, smaller group, with requested specific for groups of 3
+        # This directs how the grouping should occur...
+        # - if distributing leftover students is desired then the the next if statement is skipped
+        #     b/c that already happens
+        # - if distribution is not desired, the function runs to create another group for the leftovers
+        # - if the grouping is 3 and there is one student left over, automatically make 2 groups of 2 (requested)
+
+        if not self.distrib_lo:
+            print(' !!! Leftover Students have NOT been distributed ...')
+            df = self._dont_distribute_leftovers(df)
+
+        if self.gps == 3 and len(df) % self.gps == 1 and not self.distrib_lo:
+            print(' !!! One person left over in groups of 3, making 2 groups of 2 ...')
             df.iloc[0,3] = self.group_deliniator
+        else:
+            print(' !!! Leftover Students have been distributed ...')
 
         if not self.distrib_lo:
             df = self._dont_distribute_leftovers(df)

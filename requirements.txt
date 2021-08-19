@@ -1,6 +1,7 @@
-xlrd-2.0.1
-openpyxl-3.0.7
+xlrd==2.0.1
+openpyxl==3.0.7
 pandas==1.2.0
+numpy==1.19.5
 plotly==4.14.3
 seaborn==0.11.1
 openpyxl==3.0.7

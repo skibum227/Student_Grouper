@@ -1,6 +1,7 @@
 import plotly.graph_objects as go
 import seaborn as sns
 import random
+import dash
 
 # Pastel color list, randomized with white in front
 color_list = sns.color_palette("pastel", as_cmap=True)
@@ -80,6 +81,13 @@ class Plotter(object):
          ])
 
         fig.show()
+
+        # Run the server
+        #app = dash.Dash(__name__)
+        #app.layout = html.Div([
+        #    dcc.Graph(id="graph", figure=fig),
+        #])
+        #app.run_server(debug=True, port=8000)
 
 
 if __name__ == '__main__':

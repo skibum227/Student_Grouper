@@ -86,7 +86,7 @@ class Grouper(object):
 
 if __name__ == '__main__':
 
-    params = {'period': '1', 'gps':3, 'distrib_lo': False, 'filename': 'student_ledger.xlsx'}
+    params = {'period': 'example', 'gps':3, 'distrib_lo': False, 'filename': 'student_ledger.xlsx'}
     grouper = Grouper(params)
     df = grouper.group_students()
     grouper.print_student_groups(df) 

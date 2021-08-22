@@ -1,9 +1,11 @@
 
 version: '3.7'
 services:
-  ml_api_main:
+  app:
     container_name: student_grouper_container
-    image: skibum227/student_grouper:latest
+    build: .
+    stdin_open: true
+    tty: true
     ports:
       - '8000:8000'
     hostname: 0.0.0.0

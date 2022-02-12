@@ -1,7 +1,21 @@
 <!DOCTYPE html>
-<form method="POST">
-    <input name="period">
+<html>
+    <head>
+        <title>{{ title }}</title>
+    </head>
+    <body>
+        {% if username == "Mrs. Herr": %}
+        <h1>Whats up teach?</h1>
+	{% else %}
+        <h1>Hello {{ username }}</h1>
+	{% endif %}
+    </body>
+</html>
+
+<form  action = "http://localhost:8000/" method="POST">
+    <input type='text'  name="period">
     <input name="groups">
     <input type="submit">
+
 </form>
 

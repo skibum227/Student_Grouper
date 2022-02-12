@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ title }}</title>
+    </head>
+    <body>
+        {% if username == "Mrs. Herr": %}
+        <h1>Whats up Teach?</h1>
+    {% else %}
+        <h1>Hello {{ username }}</h1>
+    {% endif %}
+    </body>
+</html>
+<form action="/data" method = "POST">
+    <p>Class Period <input type = "text" name = "period" /></p>
+    <p>Number of Groups <input type = "text" name = "gps" /></p>
+    <p>Distribute Leftovers <input type = "checkbox" name = "dl" /></p>
+    <p><input type = "submit" value = "Submit" /></p>
+</form>

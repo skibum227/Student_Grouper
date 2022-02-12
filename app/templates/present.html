@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ title }}</title>
+    </head>
+    <body>
+        {% if username == "Mrs. Herr": %}
+        <h1>Which students did not make it to class today?</h1>
+    {% else %}
+        <h1>Who are you?</h1>
+    {% endif %}
+    </body>
+</html>
+
+<form action="/present" method = "POST">
+	{% for key,value in stu_dict.items() %}
+		<p> {{key}}<input type = "checkbox" name='pres' /></p>
+	{% endfor %}
+	<p><input type = "submit" value = "Submit" /></p>
+</form>
+

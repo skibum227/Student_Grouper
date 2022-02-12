@@ -22,7 +22,7 @@ class Initializer(object):
         inputparser.add_argument('--groups', '-gps', type=int, dest='gps', action='store',
             default=3, help="Select number of groups")
 
-        # Predict on an exact loan id
+        # Distribute left over students
         inputparser.add_argument('--distribute_leftovers', '-dl', dest='distrib_lo', action='store_true',
             default=False, help='Flag to distribute leftover students into groups to preserve desired number')
 

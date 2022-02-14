@@ -14,7 +14,7 @@
 
 <form action="/present" method = "POST">
 	{% for key,value in stu_dict.items() %}
-		<p> {{key}}<input type = "checkbox" name='pres' /></p>
+		<p> {{key}}<input type = "checkbox" value={{key}} name='pres' checked/></p>
 	{% endfor %}
 	<p><input type = "submit" value = "Submit" /></p>
 </form>

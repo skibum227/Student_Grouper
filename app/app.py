@@ -39,11 +39,12 @@ def present():
     if request.method == 'GET':
         return f"You are lost, got back to '/form'"
     if request.method == 'POST':
-        print(request.form['pres'])
-        grouper = Grouper(params_list[0])
-        df = grouper.group_students()
-        grouper.print_student_groups(df)
-        Plotter(params_list[0], df).plot_groups()
+        print(request.form.getlist('pres'))
+        # https://stackoverflow.com/questions/53344797/how-create-an-array-with-checkboxes-in-flask 
+        # grouper = Grouper(params_list[0])
+        # df = grouper.group_students()
+        # grouper.print_student_groups(df)
+        # Plotter(params_list[0], df).plot_groups()
         return render_template('form.html')
 
 

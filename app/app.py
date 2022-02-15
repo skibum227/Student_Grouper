@@ -32,19 +32,21 @@ def data():
         df = pd.read_excel('student_ledger.xlsx', sheet_name=f'period_{period}')
         stu_dict = pd.Series(df.present.values,index=df.student_names).to_dict()
 
+        print(params_list)
         return render_template('present.html', title='Student Grouper', stu_dict=stu_dict)
 
 @app.route('/present', methods=['POST', 'GET'])
 def present():
+    # https://stackoverflow.com/questions/53344797/how-create-an-array-with-checkboxes-in-flask 
     if request.method == 'GET':
         return f"You are lost, got back to '/form'"
     if request.method == 'POST':
-        print(request.form.getlist('pres'))
-        # https://stackoverflow.com/questions/53344797/how-create-an-array-with-checkboxes-in-flask 
-        # grouper = Grouper(params_list[0])
-        # df = grouper.group_students()
-        # grouper.print_student_groups(df)
-        # Plotter(params_list[0], df).plot_groups()
+        present_stus=request.form.getlist('pres')
+        print(present_stus)
+        grouper = Grouper(params_list[0], present_stus)
+        df = grouper.group_students()
+        grouper.print_student_groups(df)
+        Plotter(params_list[0], df).plot_groups()
         return render_template('form.html')
 
 

@@ -3,7 +3,7 @@ import numpy as np
 
 
 class Grouper(object):
-    def __init__(self, params):
+    def __init__(self, params, present_stus=None):
 
         self.params = params
         self.period = f'period_{self.params.get("period")}'
@@ -15,13 +15,18 @@ class Grouper(object):
         self.distrib_lo = params.get('distrib_lo')
         self.filename = params.get('filename')
 
-        self.student_df = self._read_in_ledger()
+        self.student_df = self._read_in_ledger(present_stus)
         self.group_deliniator = len(self.student_df) // self.gps
 
-    def _read_in_ledger(self):
+    def _read_in_ledger(self, present_stus=None):
 
         df = pd.read_excel(self.filename, sheet_name=self.period)
 
+        # if there are students who are not present
+        if present_stus:
+            print(present_stus)
+            df['present'] = np.where(df.student_names.isin(present_stus), 'y', 'n')
+            
         # Only count students that are present
         df = df[df.present.eq('y')]
 
@@ -60,14 +65,14 @@ class Grouper(object):
         # - if the grouping is 3 and there is one student left over, automatically make 2 groups of 2 (requested)
 
         if not self.distrib_lo:
-            print(' !!! Leftover Students have NOT been distributed ...')
+            print(' !!! Left over Students have NOT been distributed ...')
             df = self._dont_distribute_leftovers(df)
 
         if self.gps == 3 and len(df) % self.gps == 1 and not self.distrib_lo:
             print(' !!! One person left over in groups of 3, making 2 groups of 2 ...')
             df.iloc[0,3] = self.group_deliniator
         else:
-            print(' !!! Leftover Students have been distributed ...')
+            print(' !!! Left over Students have been distributed ...')
 
         if not self.distrib_lo:
             df = self._dont_distribute_leftovers(df)

@@ -4,9 +4,6 @@ from plotter import Plotter
 import pandas as pd
 #https://pythonbasics.org/flask-tutorial-templates/
 
-# Need to get the student dict to save a dictionary output
-# then it can be used to reduce the size of the dictionary that hits the grouper logic
-
 app = Flask(__name__)
 name = 'Mrs. Herr'
 params_list = []

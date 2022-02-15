@@ -4,6 +4,8 @@ from plotter import Plotter
 import pandas as pd
 # https://pythonbasics.org/flask-tutorial-templates/
 # https://stackoverflow.com/questions/53344797/how-create-an-array-with-checkboxes-in-flask
+# make it all look nice
+# https://dash-bootstrap-components.opensource.faculty.ai/docs/components/toast/
 
 app = Flask(__name__)
 name = 'Mrs. Herr'

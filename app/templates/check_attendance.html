@@ -4,15 +4,12 @@
         <title>{{ title }}</title>
     </head>
     <body>
-        {% if username == "Mrs. Herr": %}
-        <h1>Which students did not make it to class today?</h1>
-    {% else %}
-        <h1>Who are you?</h1>
-    {% endif %}
+        <h1>Below is the class roster ... </h1>
+        <h2> Please update for current attendance </h2>
     </body>
 </html>
 
-<form action="/present" method = "POST">
+<form action="/attendance" method = "POST">
 	{% for key,value in stu_dict.items() %}
 		<p> {{key}}<input type = "checkbox" value={{key}} name='pres' checked/></p>
 	{% endfor %}

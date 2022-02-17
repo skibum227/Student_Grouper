@@ -51,7 +51,8 @@ def check_attendance():
 
         return render_template('activity_params.html')
 
-app.run(host='localhost', port=8000, debug=True)
+#app.run(host='localhost', port=8000, debug=True)
+app.run(host='0.0.0.0', port=5000)
 
 
 

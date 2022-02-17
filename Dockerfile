@@ -16,5 +16,5 @@ RUN pip install -r requirements.txt
 # Step 4: Copy source code in the current directory to the container
 COPY ./app /app
 
-
+EXPOSE 5000
 CMD ["python", "./app/app.py"]

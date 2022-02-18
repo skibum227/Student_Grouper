@@ -64,6 +64,7 @@ class Grouper(object):
         # - if distribution is not desired, the function runs to create another group for the leftovers
         # - if the grouping is 3 and there is one student left over, automatically make 2 groups of 2 (requested)
 
+        print(f'{self.distrib_lo}, yeahhhh')
         if not self.distrib_lo:
             print(' !!! Left over Students have NOT been distributed ...')
             df = self._dont_distribute_leftovers(df)

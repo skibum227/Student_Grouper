@@ -47,9 +47,9 @@ def check_attendance():
 
         grouper.print_student_groups(df)
 
-        Plotter(params_list[0], df).plot_groups()
+        graphjson = Plotter(params_list[0], df).plot_groups()
 
-        return render_template('activity_params.html')
+        return render_template('plot_student_groups.html', graphjson=graphjson)
 
 #app.run(host='localhost', port=8000, debug=True)
 app.run(host='0.0.0.0', port=5000)

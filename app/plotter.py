@@ -1,9 +1,11 @@
 import plotly.graph_objects as go
+import plotly
 import seaborn as sns
 import random
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import json
 
 # Pastel color list, randomized with white in front
 color_list = sns.color_palette("pastel", as_cmap=True)
@@ -81,15 +83,12 @@ class Plotter(object):
                 font=dict(color='black', size=30)
             ))
          ])
+        fig.update_layout(width=2000, height=2000)
 
-        fig.show()
+        graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
-        # Run the server
-        #app = dash.Dash(__name__)
-        #app.layout = html.Div([
-        #    dcc.Graph(id="graph", figure=fig),
-        #])
-        #app.run_server(debug=True, port=8080, host='0.0.0.0')
+        return graphJSON
+        # fig.show()
 
 
 if __name__ == '__main__':

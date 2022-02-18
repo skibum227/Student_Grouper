@@ -1,0 +1,7 @@
+<!DOCTYPE html>
+<html>
+<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+<script type='text/javascript'>
+  var graphs = {{graphjson | safe}};
+  Plotly.plot('chart',graphs,{});
+</script></html>

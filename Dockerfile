@@ -15,9 +15,11 @@ RUN pip install -r requirements.txt
 
 # Step 4: Copy source code in the current directory to the container
 COPY ./app /app
+WORKDIR ./app
 
 EXPOSE 5000
+EXPOSE 5050
 #CMD ["python", "./app/app.py"]
 ENTRYPOINT [ "python" ]
 
-CMD [ "./app/app.py" ]
+CMD [ "./app.py" ]

@@ -19,6 +19,7 @@ WORKDIR ./app
 
 EXPOSE 5000
 #CMD ["python", "./app/app.py"]
-ENTRYPOINT [ "python" ]
+ENTRYPOINT ["./gunicorn_starter.sh"]
+#ENTRYPOINT [ "python" ]
 
-CMD [ "./app.py" ]
+#CMD [ "./app.py" ]

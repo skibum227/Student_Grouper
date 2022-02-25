@@ -5,7 +5,9 @@ from plotter import Plotter
 import pandas as pd
 # https://pythonbasics.org/flask-tutorial-templates/
 # https://stackoverflow.com/questions/53344797/how-create-an-array-with-checkboxes-in-flask
-# make it all look nice
+# https://medium.com/geekculture/aws-container-services-part-1-b147e974c745
+# https://dev.to/marounmaroun/running-docker-container-with-gunicorn-and-flask-4ihg
+# Make it all look nice
 # https://dash-bootstrap-components.opensource.faculty.ai/docs/components/toast/
 
 app = Flask(__name__)
@@ -51,7 +53,9 @@ def check_attendance():
 
 secret = secrets.token_urlsafe(32)
 app.secret_key = secret
-app.run(host='0.0.0.0', port=5000)
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
 
 
 

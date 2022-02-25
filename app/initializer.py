@@ -16,7 +16,8 @@ class Initializer(object):
 
         # What period to run grouper on
         inputparser.add_argument('--period', '-p', type=str, dest='period', action='store',
-            default=None, required=True, help="Select period to group")
+            #default=None, required=True, help="Select period to group")
+            default='example', required=False, help="Select period to group")
 
         # How many groups to make
         inputparser.add_argument('--groups', '-gps', type=int, dest='gps', action='store',

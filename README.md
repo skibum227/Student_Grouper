@@ -2,6 +2,8 @@
 ### Created by Skibum Woodworks Algorithm Development Division, 2021-08-09
 All working 2022-02-24
 
+https://towardsdatascience.com/deploy-your-python-app-with-aws-fargate-tutorial-7a48535da586
+
 ## Summary
 This repository contains the code to groups students in desired numbers, handle leftovers, and then create a 
 nice visual for students.

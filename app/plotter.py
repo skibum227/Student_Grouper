@@ -68,10 +68,10 @@ class Plotter(object):
                 values=['Student Name', f'Period {self.period} Groups'],
                 line=dict(width=3),
                 line_color='black',
-                fill_color='orange',
+                fill_color='white',
                 align='center',
                 height=45,
-                font=dict(color='brown', size=40)
+                font=dict(color='black', size=40)
             ),
             cells=dict(
                 values=[df.student_names, df.student_group],

@@ -78,6 +78,9 @@ class Grouper(object):
         if not self.distrib_lo:
             df = self._dont_distribute_leftovers(df)
 
+        # Increment student groups by 1 b/c there is no board "0" in Alex's class
+        df.student_group += 1
+
         return df
 
     def print_student_groups(self, df):

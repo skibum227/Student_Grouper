@@ -1,5 +1,8 @@
 # Main Configuration
 # Need to pass in env vars: AWS_PROFILE=personal
+# Resources:
+#   https://engineering.finleap.com/posts/2020-02-20-ecs-fargate-terraform/
+#   https://github.com/finleap/tf-ecs-fargate-tmpl
 
 terraform {
   required_providers {
@@ -17,10 +20,15 @@ terraform {
 }
 
 provider "aws" {
-  region  = local.region
-  profile = "personal"
+  region     = local.region
+  profile    = "personal"
 }
 
 locals {
-  region = "us-east-1"
+  region = "us-east-1" 
+  container_image = "301599272037.dkr.ecr.us-east-1.amazonaws.com/student_grouper_repo:latest"
+  # The number of cpu units used by the task
+  cpu = 0.25
+  # The amount (in MiB) of memory used by the task
+  memory = 0.5
 }

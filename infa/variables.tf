@@ -1,6 +1,6 @@
 variable "name" {
   description = "the name of your stack, e.g. \"demo\""
-  default = "student_grouper"
+  default = "student-grouper"
 }
 
 variable "environment" {
@@ -10,7 +10,7 @@ variable "environment" {
 
 variable "region" {
   description = "the AWS region in which resources are created, you must set the availability_zones variable as well if you define this value to something other than the default"
-  default     = "eu-central-1"
+  default     = "us-east-1"
 }
 
 variable "cidr" {
@@ -30,10 +30,15 @@ variable "public_subnets" {
 
 variable "service_desired_count" {
   description = "Number of tasks running in parallel"
-  default     = 2
+  default     = 1
 }
 
 variable "container_port" {
   description = "The port where the Docker is exposed"
   default     = 5000
+}
+
+variable "health_check_path" {
+  description = "Http path for task health check"
+  default     = "/health"
 }

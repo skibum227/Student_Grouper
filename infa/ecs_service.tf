@@ -3,23 +3,28 @@ resource "aws_ecs_cluster" "main" {
 }
 
 resource "aws_ecs_task_definition" "main" {
+  family                   = "service"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = local.cpu
   memory                   = local.memory
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_role.arn
-  container_definitions = jsonencode([{
-   name        = "${var.name}-container-${var.environment}"
-   image       = local.container_image
-   essential   = true
-   environment = var.environment
-   portMappings = [{
-     protocol      = "tcp"
-     containerPort = var.container_port
-     hostPort      = var.container_port
-   }]
-  }])
+  container_definitions = jsonencode([
+    {
+       name        = "${var.name}-container-${var.environment}"
+       image       = local.container_image
+       essential   = true
+       environment = [{"name":"${var.environment}"}]
+       portMappings = [
+        {
+         protocol      = "tcp"
+         containerPort = var.container_port
+         hostPort      = var.container_port
+        }
+       ]
+    }
+  ])
 }
 
 resource "aws_ecs_service" "main" {
@@ -33,13 +38,13 @@ resource "aws_ecs_service" "main" {
  scheduling_strategy                = "REPLICA"
  
  network_configuration {
-   security_groups  = var.ecs_service_security_groups
-   subnets          = var.subnets.*.id
+   security_groups  = [aws_security_group.ecs_tasks.id]
+   subnets          = aws_subnet.private.*.id
    assign_public_ip = false
  }
  
  load_balancer {
-   target_group_arn = var.aws_alb_target_group_arn
+   target_group_arn = aws_alb_target_group.main.arn
    container_name   = "${var.name}-container-${var.environment}"
    container_port   = var.container_port
  }

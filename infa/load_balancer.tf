@@ -26,26 +26,27 @@ resource "aws_alb_target_group" "main" {
   }
 }
 
-resource "aws_alb_listener" "http" {
+resource "aws_alb_listener" "http_redirect" {
   load_balancer_arn = aws_lb.main.id
   port              = 80
   protocol          = "HTTP"
  
   default_action {
+   target_group_arn = aws_alb_target_group.main.id
    type = "redirect"
  
    redirect {
      port        = 443
-     protocol    = "HTTPS"
+     protocol    = "HTTP"
      status_code = "HTTP_301"
    }
   }
 }
  
-resource "aws_alb_listener" "https" {
+resource "aws_alb_listener" "http_forward" {
   load_balancer_arn = aws_lb.main.id
   port              = 443
-  protocol          = "HTTPS"
+  protocol          = "HTTP"
  
   default_action {
     target_group_arn = aws_alb_target_group.main.id

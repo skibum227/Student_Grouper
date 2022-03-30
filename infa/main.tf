@@ -26,7 +26,7 @@ provider "aws" {
 
 locals {
   region = "us-east-1" 
-  container_image = "301599272037.dkr.ecr.us-east-1.amazonaws.com/student_grouper_repo:latest"
+  container_image = "301599272037.dkr.ecr.us-east-1.amazonaws.com/student-grouper-repository:v0.0.2"
   # The number of cpu units used by the task
   cpu = 256
   # The amount (in MiB) of memory used by the task

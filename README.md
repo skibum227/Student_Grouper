@@ -59,4 +59,4 @@ Note: [These steps are used to get running on AWS](https://towardsdatascience.co
 
 1. Start a new ECS task with Fargate (use first security group)
 
-1. Update the inbound rules to accept port **5000** at 0.0.0.0
+1. Update the inbound rules to accept port **5000** at 0.0.0.0 (click on the ENI from the task page)

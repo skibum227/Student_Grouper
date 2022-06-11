@@ -47,6 +47,8 @@ nice visual for students.
 
 Note: [These steps are used to get running on AWS](https://towardsdatascience.com/deploy-your-python-app-with-aws-fargate-tutorial-7a48535da586)
 
+Note2: https://stackoverflow.com/questions/67361936/exec-user-process-caused-exec-format-error-in-aws-fargate-service
+
 1. Update the **VERSION** file with the release version and tag the commit
 
 1. Build the docker file: `make build` (use `make rebuild` if there is a change)

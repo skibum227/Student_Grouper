@@ -17,9 +17,9 @@ RUN pip install -r requirements.txt
 COPY ./app /app
 WORKDIR ./app
 
+# Expose the port
 EXPOSE 5000
-#CMD ["python", "./app/app.py"]
-ENTRYPOINT ["./gunicorn_starter.sh"]
-#ENTRYPOINT [ "python" ]
 
-#CMD [ "./app.py" ]
+# Lets run it!
+RUN chmod +x ./gunicorn_starter.sh
+ENTRYPOINT ["./gunicorn_starter.sh"]

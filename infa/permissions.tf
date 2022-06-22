@@ -16,9 +16,9 @@ resource "aws_iam_role" "task_resource_access" {
   name               = "${var.resource_prefix}-${each.key}-task-role"
   description        = "Access DS resources from ECS runtime containers."
   assume_role_policy = data.aws_iam_policy_document.trust_service_ecs_tasks.json
-  managed_policy_arns = [
-    aws_iam_policy.s3_task_artifact_access_read_write[each.key].arn
-  ]
+#  managed_policy_arns = [
+#    aws_iam_policy.s3_task_artifact_access_read_write[each.key].arn
+#  ]
 }
 
 # Policies

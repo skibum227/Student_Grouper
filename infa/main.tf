@@ -27,6 +27,7 @@ provider "aws" {
 locals {
   region          = "us-east-1"
   container_port     = 5000
+  mlflow_port     = 5000
   container_image = "301599272037.dkr.ecr.us-east-1.amazonaws.com/student-grouper-repository:v0.0.2"
   # computed
   # mlflow_dns          = "${aws_service_discovery_service.exposed_service["mlflow_server-tracking-v1"].name}.${aws_service_discovery_private_dns_namespace.exposed_service["mlflow_server-tracking-v1"].name}"
@@ -58,7 +59,8 @@ locals {
     for instance in local.exposed_specs :
     "${instance.name}-${instance.job_type}-${instance.version}" => instance
   }
-  spec_map = merge(local.spec_map_batch, local.spec_map_exposed)
+  #spec_map = merge(local.spec_map_batch, local.spec_map_exposed)
+  spec_map = local.spec_map_exposed
 }
 
 locals {

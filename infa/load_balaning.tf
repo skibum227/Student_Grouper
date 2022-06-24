@@ -15,7 +15,7 @@ resource "aws_ecs_service" "exposed_service" {
   load_balancer {
     target_group_arn = module.alb.target_group_arns[local.target_group_index_map[each.key]]
     container_name   = module.jobs[each.key].container_name
-    container_port   = local.mlflow_port
+    container_port   = local.container_port
   }
 
   service_registries {

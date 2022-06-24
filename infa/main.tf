@@ -4,6 +4,7 @@
 #   https://engineering.finleap.com/posts/2020-02-20-ecs-fargate-terraform/
 #   https://github.com/finleap/tf-ecs-fargate-tmpl
 
+# Terraform State
 terraform {
   required_providers {
     aws = {
@@ -24,29 +25,26 @@ provider "aws" {
   profile    = "personal"
 }
 
+# General Locals
 locals {
   region          = "us-east-1"
-  container_port     = 5000
-  mlflow_port     = 5000
-  container_image = "301599272037.dkr.ecr.us-east-1.amazonaws.com/student-grouper-repository:v0.0.2"
-  # computed
-  # mlflow_dns          = "${aws_service_discovery_service.exposed_service["mlflow_server-tracking-v1"].name}.${aws_service_discovery_private_dns_namespace.exposed_service["mlflow_server-tracking-v1"].name}"
-  # mlflow_artifact_uri = "s3://${aws_s3_bucket.job_artifacts.bucket}/mlflow_server/v1" # must follow convention defined in `permissions.tf`: `bucket/name/version`
-  # mlflow_db_uri       = "mysql+pymysql://${aws_rds_cluster.backend_store.master_username}:${aws_rds_cluster.backend_store.master_password}@${aws_rds_cluster.backend_store.endpoint}:${aws_rds_cluster.backend_store.port}/${aws_rds_cluster.backend_store.database_name}"
+  container_port  = 5000
+  #container_image = "301599272037.dkr.ecr.us-east-1.amazonaws.com/student-grouper-repository:v0.0.2"
 }
 
+# Specific locals
 locals {
   exposed_specs = [
     {
-      name              = "mlflow_server"
-      version           = "v1"
-      job_type          = "tracking"
-      cpu               = 1
-      memory            = 2
-      #command           = "--static-prefix /mlflow --host=0.0.0.0 --port=${local.mlflow_port} --default-artifact-root=${local.mlflow_artifact_uri} --backend-store-uri=${local.mlflow_db_uri}\""
-      container_port    = local.mlflow_port
-      health_check_path = "/mlflow/#/"
-      path_patterns     = ["/mlflow/*"]
+      name              = "student_grouper"
+      version           = "v2"
+      job_type          = "ui"
+      cpu               = 0.25
+      memory            = 0.5
+      #command          = 'there is no override command' 
+      container_port    = local.container_port
+      health_check_path = "/student_grouper/#/"
+      path_patterns     = ["/student_grouper/*"]
     }
   ]
 }
@@ -116,21 +114,11 @@ resource "aws_ecs_cluster" "jobs" {
   name = "${var.resource_prefix}-jobs-cluster"
 }
 
-resource "aws_db_subnet_group" "rds" {
-  name       = "${var.resource_prefix}-rds"
-  subnet_ids = aws_subnet.rds.*.id
-}
 
 data "aws_availability_zones" "available" {
   state = "available"
 }
 
-resource "aws_subnet" "rds" {
-  count             = 2
-  cidr_block        = cidrsubnet(module.vpc.vpc_cidr_block, 4, (5 + count.index))
-  vpc_id            = module.vpc.vpc_id
-  availability_zone = data.aws_availability_zones.available.names[count.index]
-}
 
 module "lb_ecs_service_web_access_sg" {
   source  = "terraform-aws-modules/security-group/aws"
@@ -149,7 +137,8 @@ module "lb_ecs_service_web_access_sg" {
       to_port   = 80
       protocol  = "tcp"
       # Allows traffic through the vpn
-      cidr_blocks = "23.23.65.159/32"
+      #cidr_blocks = "23.23.65.159/32"
+      cidr_blocks = "0.0.0.0/0"
     }
   ]
 }

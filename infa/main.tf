@@ -43,8 +43,9 @@ locals {
       memory            = 0.5
       #command          = 'there is no override command' 
       container_port    = local.container_port
-      health_check_path = "/student_grouper/#/"
-      path_patterns     = ["/student_grouper/*"]
+      health_check_path = "/"
+      # path_patterns     = ["/student_grouper/"]
+      path_patterns     = ["/*"]
     }
   ]
 }
@@ -131,16 +132,19 @@ module "lb_ecs_service_web_access_sg" {
   egress_cidr_blocks = ["0.0.0.0/0"]
   egress_rules       = ["all-all"]
 
-  ingress_with_cidr_blocks = [
-    {
-      from_port = 80
-      to_port   = 80
-      protocol  = "tcp"
-      # Allows traffic through the vpn
-      #cidr_blocks = "23.23.65.159/32"
-      cidr_blocks = "0.0.0.0/0"
-    }
-  ]
+  ingress_cidr_blocks = ["0.0.0.0/0"]
+  ingress_rules       = ["all-all"]
+
+  # ingress_with_cidr_blocks = [
+  #   {
+  #     from_port = 80
+  #     to_port   = 80
+  #     protocol  = "tcp"
+  #     # Allows traffic through the vpn
+  #     #cidr_blocks = "23.23.65.159/32"
+  #     cidr_blocks = "0.0.0.0/0"
+  #   }
+  # ]
 }
 
 #  Security Group for internal ip

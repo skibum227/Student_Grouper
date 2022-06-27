@@ -1,3 +1,10 @@
+# TODO
+- Update the build file for clearer usage
+- Make the health checks not use the same location as the app
+- Make the UI better
+- ADD a DB
+- Update this README which is a little outdated
+
 # Student Grouper
 ### Created by Skibum Woodworks Algorithm Development Division, 2021-08-09
 #### (All working on AWS 2022-02-27)

@@ -4,7 +4,7 @@
 # - Create connection and work with ALB
 resource "aws_ecs_service" "exposed_service" {
   for_each         = local.spec_map_exposed
-  name             = "${var.resource_prefix}-${each.key}"
+  name             = "${var.resource_prefix}${each.key}"
   cluster          = aws_ecs_cluster.jobs.id
   task_definition  = module.jobs[each.key].task_arn
   desired_count    = 1
@@ -38,14 +38,14 @@ resource "aws_ecs_service" "exposed_service" {
 
 resource "aws_service_discovery_private_dns_namespace" "exposed_service" {
   for_each    = local.spec_map_exposed
-  name        = "${var.resource_prefix}-${each.key}"
+  name        = "${var.resource_prefix}${each.key}"
   description = "Private DNS"
   vpc         = module.vpc.vpc_id
 }
 
 resource "aws_service_discovery_service" "exposed_service" {
   for_each = local.spec_map_exposed
-  name     = "${var.resource_prefix}-${each.key}"
+  name     = "${var.resource_prefix}${each.key}"
 
   dns_config {
     namespace_id = aws_service_discovery_private_dns_namespace.exposed_service[each.key].id
@@ -62,7 +62,7 @@ module "alb" {
   source  = "terraform-aws-modules/alb/aws"
   version = "~> 6.0"
 
-  name = "${var.resource_prefix}-ecs-alb"
+  name = "${var.resource_prefix}ecs-alb"
 
   load_balancer_type = "application"
 

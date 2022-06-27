@@ -18,7 +18,7 @@ locals {
 }
 
 resource "aws_ecs_task_definition" "this" {
-  family = "${var.resource_prefix}-${var.task_name}-task-definition"
+  family = "${var.resource_prefix}${var.task_name}-task-definition"
 
   requires_compatibilities = ["FARGATE"]
 

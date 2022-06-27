@@ -1,3 +1,5 @@
+# These are the outputs that can be futher used by resources after the module is created
+
 output "container_name" {
   value       = local.container_name
   description = "The container name in the task definition. Can be used to set container overrides."

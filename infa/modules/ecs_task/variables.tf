@@ -1,3 +1,5 @@
+# These variables are what is required when the module is defined
+
 variable "resource_prefix" {
   type        = string
   description = "Used as a prefix for all resources in a module."

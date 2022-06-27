@@ -3,7 +3,7 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "2.77.0"
 
-  name            = "${var.resource_prefix}-vpc"
+  name            = "${var.resource_prefix}vpc"
   cidr            = "10.0.0.0/16"
   azs             = ["us-east-1a", "us-east-1b", "us-east-1c"]
   public_subnets  = ["10.0.0.0/27", "10.0.2.0/27"]
@@ -30,7 +30,7 @@ module "endpoints" {
       private_dns_enabled = true
       subnet_ids          = module.vpc.private_subnets
       tags = {
-        Name = "${var.resource_prefix}-ecr-api-vpc-endpoint"
+        Name = "${var.resource_prefix}-ecrapi-vpc-endpoint"
       }
     },
     s3 = {
@@ -46,7 +46,7 @@ module "endpoints" {
       private_dns_enabled = true
       subnet_ids          = module.vpc.private_subnets
       tags = {
-        Name = "${var.resource_prefix}-ecs-vpc-endpoint"
+        Name = "${var.resource_prefix}ecs-vpc-endpoint"
       }
     },
     logs = {
@@ -54,7 +54,7 @@ module "endpoints" {
       private_dns_enabled = true
       subnet_ids          = module.vpc.private_subnets
       tags = {
-        Name = "${var.resource_prefix}-logs-vpc-endpoint"
+        Name = "${var.resource_prefix}logs-vpc-endpoint"
       }
     }
   }

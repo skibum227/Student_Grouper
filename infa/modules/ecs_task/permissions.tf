@@ -1,6 +1,7 @@
 # ECS Permissions
 # Policies/roles required by the ECS cluster and its instances.
 
+# Enables the ability to handle pulling ecr images and running ecs tasks
 data "aws_iam_policy_document" "trust_service_ecs_tasks" {
   statement {
     actions = ["sts:AssumeRole"]
@@ -14,6 +15,7 @@ data "aws_iam_policy_document" "trust_service_ecs_tasks" {
   }
 }
 
+# The iam role that is capable of pulling the image and running the ecs task
 resource "aws_iam_role" "ecs_orchestration" {
   name               = "${var.resource_prefix}-ecs-instance-${var.task_name}-role"
   description        = "ECS task orchestrator - Manage Ec2 resources and adjacent resources (such as logging)."
@@ -24,11 +26,15 @@ resource "aws_iam_role" "ecs_orchestration" {
   ]
 }
 
+# This is the role for the ECS instance, to which the iam role will be attached
+# - https://medium.com/devops-dudes/the-difference-between-an-aws-role-and-an-instance-profile-ae81abd700d
+# - This is why Terraform/AWS Cloud is confusing...
 resource "aws_iam_instance_profile" "ecs_orchestration" {
   name = "${var.resource_prefix}-ecs-profile-${var.task_name}-profile"
   role = aws_iam_role.ecs_orchestration.name
 }
 
+# Creates the policy from the policy document so it can be attached
 resource "aws_iam_policy" "logging_read_write_access" {
   name        = "${var.resource_prefix}-manage-logging-${var.task_name}-policy"
   path        = "/"
@@ -36,6 +42,7 @@ resource "aws_iam_policy" "logging_read_write_access" {
   policy      = data.aws_iam_policy_document.logging_read_write_access.json
 }
 
+# Enables the ability to write logs to a cloudwatch log group
 data "aws_iam_policy_document" "logging_read_write_access" {
   statement {
     actions = [

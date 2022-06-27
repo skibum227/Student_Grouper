@@ -28,13 +28,13 @@ locals {
   container_port  = 5000
 }
 
-# Specific locals
+# Definition for each task to be ran by ECS Fargate
 locals {
   exposed_specs = [
     {
       name              = "student_grouper"
-      version           = "latest"
-      job_type          = "ui"
+      job_type          = "application"
+      image_version     = "latest"
       cpu               = 0.25
       memory            = 0.5
       container_port    = local.container_port
@@ -45,9 +45,10 @@ locals {
   ]
 }
 
-# Converting the job specs into a map is useful because of its compatibility
-# with `for_each`. It also gives us a convenient mechanism for looking up job
-# specific policies.
+# Create an object for all tasks defined above
+#  - Converting the job specs into a map is useful because of its compatibility
+#  -  with `for_each`. It also gives us a convenient mechanism for looking up job
+#  -  specific policies.
 locals {
   spec_map_exposed = {
     for instance in local.exposed_specs :
@@ -57,9 +58,10 @@ locals {
   spec_map = local.spec_map_exposed
 }
 
+# Target group object due to the spcific requireemnts of the AWS ALB module 
+# - We prefer to use maps to handle the specs for the ECS jobs. However, the `alb` module
+# -  interface requires us to define and reference target groups based on a positional index.
+# -  This mapping simply declares that association.
 locals {
-  # We prefer to use maps to handle the specs for the ECS jobs. However, the `alb` module
-  # interface requires us to define and reference target groups based on a positional index.
-  # This mapping simply declares that association.
   target_group_index_map = zipmap(keys(local.spec_map_exposed), range(length(local.spec_map_exposed)))
 }

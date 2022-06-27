@@ -1,10 +1,6 @@
-variable "name" {
-  description = "the name of your stack, e.g. \"demo\""
-  default = "application"
-}
-
+# Only running one thing so this is set to an empty string for symplicity
 variable "resource_prefix" {
-  description = "Used as a prefix for all resources in a module."
+  description = "Used as a prefix for all resources in a module - make sure to add a hyphen"
   type        = string
-  default     = "prod"
+  default     = ""
 }

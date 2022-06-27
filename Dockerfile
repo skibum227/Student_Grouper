@@ -18,7 +18,7 @@ COPY ./app /app
 WORKDIR ./app
 
 # Expose the port
-EXPOSE 5000
+EXPOSE 5050
 
 # Lets run it!
 RUN chmod +x ./gunicorn_starter.sh

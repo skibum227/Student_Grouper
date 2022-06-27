@@ -25,7 +25,7 @@ provider "aws" {
 # General Locals
 locals {
   region          = "us-east-1"
-  container_port  = 5000
+  container_port  = 5050
 }
 
 # Definition for each task to be ran by ECS Fargate

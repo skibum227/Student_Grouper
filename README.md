@@ -1,8 +1,8 @@
 # TODO
-- Update the build file for clearer usage
 - Make the health checks not use the same location as the app
 - Make the UI better
-- ADD a DB
+- Add a DB
+- Add a ci/cd tool and docker hub???
 - Update this README which is a little outdated
 
 # Student Grouper

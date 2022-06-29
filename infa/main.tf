@@ -38,7 +38,7 @@ locals {
       cpu               = 0.25
       memory            = 0.5
       container_port    = local.container_port
-      health_check_path = "/"
+      health_check_path = "/healthcheck"
       path_patterns     = ["/*"]
       # command           = 'an override command'
     }

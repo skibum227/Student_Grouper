@@ -1,4 +1,6 @@
 from flask import Flask, request, render_template, session
+from healthcheck import HealthCheck, EnvironmentDump
+
 import secrets
 from grouper import Grouper
 from plotter import Plotter
@@ -13,6 +15,24 @@ import pandas as pd
 app = Flask(__name__)
 name = 'Mrs. Herr'
 
+health = HealthCheck()
+envdump = EnvironmentDump()
+
+def app_availible():
+    return True, "App good to go!"
+
+def application_data():
+    return {"maintainer": "Skibum Woodworks",
+            "git_repo": "https://github.com/skibum227/Student_Grouper"}
+
+health.add_check(app_availible)
+envdump.add_section("application", application_data)
+
+# Add a flask route to expose information
+app.add_url_rule("/healthcheck", "healthcheck", view_func=lambda: health.run())
+app.add_url_rule("/environment", "environment", view_func=lambda: envdump.run())
+
+# This is where the app actually starts...
 @app.route('/')
 @app.route('/activity_parameters')
 def form(): 
@@ -55,17 +75,4 @@ secret = secrets.token_urlsafe(32)
 app.secret_key = secret
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
-
-
-
-
-
-
-
-
-
-
-
-
-
+    app.run(host='0.0.0.0', port=5050)

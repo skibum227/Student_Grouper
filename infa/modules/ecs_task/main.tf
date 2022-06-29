@@ -1,4 +1,6 @@
-# module for ecs tasks
+# A module for creating ECS tasks
+# - ECS tasks are the main work-horse so this module makes it easy to 
+# -   add as many as are required, within the same network
 
 terraform {
   required_providers {
@@ -15,9 +17,8 @@ locals {
   task_name       = "${aws_ecs_task_definition.this.family}-${aws_ecs_task_definition.this.revision}"
 }
 
-
 resource "aws_ecs_task_definition" "this" {
-  family = "${var.resource_prefix}-${var.task_name}-task-definition"
+  family = "${var.resource_prefix}${var.task_name}-task-definition"
 
   requires_compatibilities = ["FARGATE"]
 
@@ -48,6 +49,7 @@ resource "aws_ecs_task_definition" "this" {
       }
       # https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_PortMapping.html
       portMappings = var.container_port != null ? [{ containerPort = var.container_port }] : []
+      # Injects the override command if one exists
       command      = var.command != null ? [var.command] : []
     }
   ])

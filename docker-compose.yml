@@ -2,12 +2,12 @@
 version: '3.7'
 services:
   app:
-    container_name: student_grouper_container
+    container_name: student_grouper
     build: .
     stdin_open: true
     tty: true
     ports:
-      - '5000:5000'
+      - '5050:5050'
     hostname: 0.0.0.0
     volumes:
       - ./app:/app

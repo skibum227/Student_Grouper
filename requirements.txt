@@ -9,5 +9,8 @@ openpyxl==3.0.7
 dash==1.19.0
 dash-core-components==1.15.0
 dash-html-components==1.1.2
+dash-bootstrap-components==1.1.0
+dash-table==5.0.0
 dash-renderer==1.9.0
 gunicorn==19.10.0
+py-healthcheck==1.10.1

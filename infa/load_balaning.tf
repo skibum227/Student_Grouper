@@ -1,6 +1,10 @@
+# Service to do the following
+# - Creates tasks
+# - Makes sure one task is always running
+# - Create connection and work with ALB
 resource "aws_ecs_service" "exposed_service" {
   for_each         = local.spec_map_exposed
-  name             = "${var.resource_prefix}-${each.key}"
+  name             = "${var.resource_prefix}${each.key}"
   cluster          = aws_ecs_cluster.jobs.id
   task_definition  = module.jobs[each.key].task_arn
   desired_count    = 1
@@ -34,14 +38,14 @@ resource "aws_ecs_service" "exposed_service" {
 
 resource "aws_service_discovery_private_dns_namespace" "exposed_service" {
   for_each    = local.spec_map_exposed
-  name        = "${var.resource_prefix}-${each.key}"
+  name        = "${var.resource_prefix}${each.key}"
   description = "Private DNS"
   vpc         = module.vpc.vpc_id
 }
 
 resource "aws_service_discovery_service" "exposed_service" {
   for_each = local.spec_map_exposed
-  name     = "${var.resource_prefix}-${each.key}"
+  name     = "${var.resource_prefix}${each.key}"
 
   dns_config {
     namespace_id = aws_service_discovery_private_dns_namespace.exposed_service[each.key].id
@@ -53,13 +57,12 @@ resource "aws_service_discovery_service" "exposed_service" {
   }
 }
 
-# On load balancing with Fargate
-# https://aws.amazon.com/blogs/compute/task-networking-in-aws-fargate/
+# Lood balancer module that facilitates all connections and secuity
 module "alb" {
   source  = "terraform-aws-modules/alb/aws"
   version = "~> 6.0"
 
-  name = "${var.resource_prefix}-ecs-alb"
+  name = "${var.resource_prefix}ecs-alb"
 
   load_balancer_type = "application"
 
@@ -70,7 +73,7 @@ module "alb" {
   access_logs = {
   }
 
-  # this is for us to access the UI
+  # Boundries in DNS space 
   http_tcp_listeners = [
     {
       port     = 80
@@ -85,6 +88,7 @@ module "alb" {
     }
   ]
 
+  # The action that should be taken for every target
   http_tcp_listener_rules = [
     for key, instance in local.spec_map_exposed :
     {
@@ -101,8 +105,7 @@ module "alb" {
     }
   ]
 
-  # When we want to access the UI, forward the request
-  # Dynamic target groups for everything in the exposed specs
+  # Health check path - if this fails, entire website will not load
   target_groups = [
     for key, instance in local.spec_map_exposed :
     {

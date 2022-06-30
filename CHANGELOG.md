@@ -15,6 +15,7 @@ FEATURES, ENHANCEMENTS, BUG FIXES, DOCS, BREAKING CHANGES, NOTES
 
 - Updated infa for better ecs management and for adding an ALB
 - Updated the make file so it isn't dumb 
+- Added a dedicated health check endpoint
 
 ## v0.0.1
 - Initial launch 

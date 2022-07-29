@@ -123,20 +123,25 @@ def content_roster_builder(student_names):
         for x in student_names ], id="page_content_two", style=styles.CONTENT_STYLE_OFF)
     return content_roster
 
-def content_table_builder():
-    content_table = html.Div([
-        dbc.Row(
-            dbc.Col(
-                dcc.Input(id='input_three', value='test input three', type='text'),
-                width={'size': 4, 'offset': 0}
-            ),
-        ),
-        dbc.Row(
-            dbc.Col(
-                html.Div(id='output_three')
-            )
-        )], 
+def content_table_builder(fig):
+    content_table = html.Div(#[
+        # dbc.Row(
+        #     dbc.Col(
+        #         dcc.Input(id='input_three', value='test input three', type='text'),
+        #         width={'size': 4, 'offset': 0}
+        #     ),
+        # ),
+        # dbc.Row(
+        #     dbc.Col(
+        #         html.Div(id='output_three')
+        #     )
+        # )], 
+        dcc.Graph(figure=fig),
         id="page-content_three",
         style=styles.CONTENT_STYLE_OFF
     )
     return content_table
+
+
+
+

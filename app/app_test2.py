@@ -75,7 +75,12 @@ content_params = components.content_params_builder(periods)
 content_roster = components.content_roster_builder(student_names)
 
 # Build the table content
-content_table = components.content_table_builder()
+from dash import dcc
+import plotly.express as px
+
+df = px.data.iris()  # iris is a pandas dataframe
+fig = px.scatter(df, x="sepal_width", y="sepal_length")
+content_table = components.content_table_builder(fig)
 
 
 ###############
@@ -91,7 +96,7 @@ app.layout = html.Div([dcc.Location(id="ip"), sidebar, content_params, content_r
      Output(component_id="output_cnt_1", component_property="children"),
      Output(component_id="output_distrib_1", component_property="children"),
      Output(component_id="page_content_two", component_property="children"),
-     Output(component_id="output_three", component_property="children"),
+     Output(component_id="page-content_three", component_property="children"),
      Output(component_id="page-content_one", component_property="style"),
      Output(component_id="page_content_two", component_property="style"),
      Output(component_id="page-content_three", component_property="style"),
@@ -100,15 +105,19 @@ app.layout = html.Div([dcc.Location(id="ip"), sidebar, content_params, content_r
      Input(component_id="input_period_1", component_property="value"),
      Input(component_id="input_cnt_1", component_property="value"),
      Input(component_id="input_distrib_1", component_property="value"),
-     Input(component_id="page_content_two", component_property="children"),
-     Input(component_id="input_three", component_property="value")
+     Input(component_id="page_content_two", component_property="children")
 )
-def render_page_content(pathname, input_period_1, input_cnt_1, input_distrib_1, page_content_two, input_three):
-    print([x['props']['children'][0]['props']['children']['props']['id'] for x in page_content_two])
+def render_page_content(pathname, input_period_1, input_cnt_1, input_distrib_1, page_content_two):
+    from dash import dcc
+    import plotly.express as px
+
+    df_yea = px.data.iris()  # iris is a pandas dataframe
+    fig = px.scatter(df_yea, x="sepal_width", y="sepal_length")
 
     df = pd.DataFrame(stu_dict[input_period_1])
     df.sort_values('student_names', inplace=True)
     student_names = df['student_names'].values.tolist()
+    #html.P(f'Output three: {input_three}'), \
 
     if pathname in ["/parameters", "/"]: # Left the old one on purpose
         return html.P(f'Selection Idx: {input_period_1}'), \
@@ -123,12 +132,17 @@ def render_page_content(pathname, input_period_1, input_cnt_1, input_distrib_1, 
                         html.P(f'{x}'),
                         width={'size': 4, 'offset': 0, 'justify':'start'},
                     )]))for x in student_names ], \
-               html.P(f'Output three: {input_three}'), \
+               dcc.Graph(figure=fig), \
                styles.CONTENT_STYLE_ON, \
                styles.CONTENT_STYLE_OFF, \
                styles.CONTENT_STYLE_OFF
 
     elif pathname == "/roster":
+        keys = [x['props']['children'][0]['props']['children']['props']['id'] for x in page_content_two]
+        values = [x['props']['children'][0]['props']['children']['props']['value'] for x in page_content_two]
+        df = pd.DataFrame({k:v for (k,v) in zip(keys, values)}.items(), columns=['student_names', 'present']).sort_values('student_names')
+        df = df[df.present.eq(True)]
+        print(df)
         return html.P(f'Selection Idx: {input_period_1}'), \
                html.P(f'Students in group: {input_cnt_1}'), \
                html.P(f'Distribute Leftovers: {input_distrib_1}'), \
@@ -141,11 +155,25 @@ def render_page_content(pathname, input_period_1, input_cnt_1, input_distrib_1, 
                         html.P(f'{x}'),
                         width={'size': 4, 'offset': 0, 'justify':'start'},
                     )]))for x in student_names ], \
-               html.P(f'Output three: {input_three}'), \
+               dcc.Graph(figure=fig), \
                styles.CONTENT_STYLE_OFF, \
                styles.CONTENT_STYLE_ON, \
                styles.CONTENT_STYLE_OFF
     elif pathname == "/groups":
+        keys = [x['props']['children'][0]['props']['children']['props']['id'] for x in page_content_two]
+        values = [x['props']['children'][0]['props']['children']['props']['value'] for x in page_content_two]
+        df = pd.DataFrame({k:v for (k,v) in zip(keys, values)}.items(), columns=['student_names', 'present']).sort_values('student_names')
+        df = df[df.present.eq(True)]
+        print(df)
+
+        params = {'student_df': df, 'period': input_period_1, 'gps':3, 'distrib_lo': False, 'filename': 'student_ledger.xlsx'} 
+        grouper = Grouper(params)
+        df_gps = grouper.group_students()
+        #print(df_gps.columns)
+
+        params = {'period': '1', 'gps':3, 'distrib_lo': False, 'filename': 'student_ledger.xlsx', 'dont_plot': False}
+        fig = Plotter(params, df_gps).plot_groups()
+
         return html.P(f'Selection Idx: {input_period_1}'), \
                html.P(f'Students in group: {input_cnt_1}'), \
                html.P(f'Distribute Leftovers: {input_distrib_1}'), \
@@ -158,10 +186,11 @@ def render_page_content(pathname, input_period_1, input_cnt_1, input_distrib_1, 
                         html.P(f'{x}'),
                         width={'size': 4, 'offset': 0, 'justify':'start'},
                     )]))for x in student_names ], \
-               html.P(f'Output three: {input_three}'), \
+               dcc.Graph(figure=fig), \
                styles.CONTENT_STYLE_OFF, \
                styles.CONTENT_STYLE_OFF, \
                styles.CONTENT_STYLE_ON
+
     # If the user tries to reach a different page, return a 404 message
     return dbc.Jumbotron(
         [

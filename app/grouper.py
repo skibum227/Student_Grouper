@@ -15,7 +15,7 @@ class Grouper(object):
         self.distrib_lo = params.get('distrib_lo')
         self.filename = params.get('filename')
 
-        self.student_df = self._read_in_ledger(present_stus)
+        self.student_df = params.get('student_df') #if params.get('student_df') else self._read_in_ledger(present_stus)
         self.group_deliniator = len(self.student_df) // self.gps
 
     def _read_in_ledger(self, present_stus=None):

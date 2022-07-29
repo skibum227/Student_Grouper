@@ -83,11 +83,13 @@ class Plotter(object):
                 font=dict(color='black', size=30)
             ))
          ])
-        fig.update_layout(width=2000, height=2000)
+        #fig.update_layout(width=2000, height=2000)
+        fig.update_layout(height=2000)
+        return fig
 
-        graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+        # graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
-        return graphJSON
+        # return graphJSON
         # fig.show()
 
 

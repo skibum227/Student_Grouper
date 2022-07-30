@@ -82,16 +82,10 @@ class Plotter(object):
                 height=40,
                 font=dict(color='black', size=30)
             ))
-         ])
-        #fig.update_layout(width=2000, height=2000)
+        ])
+
         fig.update_layout(height=2000)
         return fig
-
-        # graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-
-        # return graphJSON
-        # fig.show()
-
 
 if __name__ == '__main__':
 

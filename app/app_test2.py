@@ -13,21 +13,18 @@ from dash import Input, Output, dcc, html
 
 import templates.styles as styles
 import templates.components as components
-# https://pythonbasics.org/flask-tutorial-templates/
-# https://stackoverflow.com/questions/53344797/how-create-an-array-with-checkboxes-in-flask
-# https://medium.com/geekculture/aws-container-services-part-1-b147e974c745
-# https://dev.to/marounmaroun/running-docker-container-with-gunicorn-and-flask-4ihg
-# Make it all look nice
-# https://dash-bootstrap-components.opensource.faculty.ai/docs/components/toast/
 
+################
+# APP DEFINITION
+################
 
-#app = Flask(__name__)
 app = dash.Dash(external_stylesheets=[dbc.themes.DARKLY])
 server = app.server
 
-####################
+###############
 # APP CONSTANTS
-####################
+###############
+
 name = 'Mrs. Herr'
 subtitle = 'The Student Grouper'
 
@@ -43,6 +40,7 @@ student_names = df['student_names'].values.tolist()
 ######################
 # HEALTH CHECK ENPONTS
 ######################
+
 health = HealthCheck()
 envdump = EnvironmentDump()
 
@@ -75,12 +73,7 @@ content_params = components.content_params_builder(periods)
 content_roster = components.content_roster_builder(student_names)
 
 # Build the table content
-from dash import dcc
-import plotly.express as px
-
-df = px.data.iris()  # iris is a pandas dataframe
-fig = px.scatter(df, x="sepal_width", y="sepal_length")
-content_table = components.content_table_builder(fig)
+content_table = components.content_table_builder()
 
 
 ###############
@@ -92,37 +85,29 @@ app.layout = html.Div([dcc.Location(id="ip"), sidebar, content_params, content_r
 
 
 @app.callback(
-     Output(component_id="output_period_1", component_property="children"),
      Output(component_id="output_cnt_1", component_property="children"),
      Output(component_id="output_distrib_1", component_property="children"),
-     Output(component_id="page_content_two", component_property="children"),
+     Output(component_id="student_roster", component_property="children"),
      Output(component_id="page-content_three", component_property="children"),
      Output(component_id="page-content_one", component_property="style"),
-     Output(component_id="page_content_two", component_property="style"),
+     Output(component_id="student_roster", component_property="style"),
      Output(component_id="page-content_three", component_property="style"),
 
      Input(component_id="ip", component_property="pathname"),
-     Input(component_id="input_period_1", component_property="value"),
-     Input(component_id="input_cnt_1", component_property="value"),
-     Input(component_id="input_distrib_1", component_property="value"),
-     Input(component_id="page_content_two", component_property="children")
+     Input(component_id="period_selection", component_property="value"),
+     Input(component_id="group_size", component_property="value"),
+     Input(component_id="distribute_leftovers", component_property="value"),
+     Input(component_id="student_roster", component_property="children")
 )
-def render_page_content(pathname, input_period_1, input_cnt_1, input_distrib_1, page_content_two):
-    from dash import dcc
-    import plotly.express as px
+def render_page_content(pathname, period_selection, group_size, distribute_leftovers, student_roster):
 
-    df_yea = px.data.iris()  # iris is a pandas dataframe
-    fig = px.scatter(df_yea, x="sepal_width", y="sepal_length")
-
-    df = pd.DataFrame(stu_dict[input_period_1])
+    df = pd.DataFrame(stu_dict[period_selection])
     df.sort_values('student_names', inplace=True)
     student_names = df['student_names'].values.tolist()
-    #html.P(f'Output three: {input_three}'), \
 
     if pathname in ["/parameters", "/"]: # Left the old one on purpose
-        return html.P(f'Selection Idx: {input_period_1}'), \
-               html.P(f'Students in group: {input_cnt_1}'), \
-               html.P(f'Distribute Leftovers: {input_distrib_1}'), \
+        return html.P(f'Students in group: {group_size}'), \
+               html.P(f'Distribute Leftovers: {distribute_leftovers}'), \
                [(dbc.Row([
                     dbc.Col(
                         daq.ToggleSwitch(id=f'{x}', color='#4682b4', value=True),
@@ -132,20 +117,19 @@ def render_page_content(pathname, input_period_1, input_cnt_1, input_distrib_1, 
                         html.P(f'{x}'),
                         width={'size': 4, 'offset': 0, 'justify':'start'},
                     )]))for x in student_names ], \
-               dcc.Graph(figure=fig), \
+               None, \
                styles.CONTENT_STYLE_ON, \
                styles.CONTENT_STYLE_OFF, \
                styles.CONTENT_STYLE_OFF
 
     elif pathname == "/roster":
-        keys = [x['props']['children'][0]['props']['children']['props']['id'] for x in page_content_two]
-        values = [x['props']['children'][0]['props']['children']['props']['value'] for x in page_content_two]
+        keys = [x['props']['children'][0]['props']['children']['props']['id'] for x in student_roster]
+        values = [x['props']['children'][0]['props']['children']['props']['value'] for x in student_roster]
         df = pd.DataFrame({k:v for (k,v) in zip(keys, values)}.items(), columns=['student_names', 'present']).sort_values('student_names')
         df = df[df.present.eq(True)]
         print(df)
-        return html.P(f'Selection Idx: {input_period_1}'), \
-               html.P(f'Students in group: {input_cnt_1}'), \
-               html.P(f'Distribute Leftovers: {input_distrib_1}'), \
+        return html.P(f'Students in group: {group_size}'), \
+               html.P(f'Distribute Leftovers: {distribute_leftovers}'), \
                [(dbc.Row([
                     dbc.Col(
                         daq.ToggleSwitch(id=f'{x}', color='#4682b4', value=True),
@@ -155,13 +139,13 @@ def render_page_content(pathname, input_period_1, input_cnt_1, input_distrib_1, 
                         html.P(f'{x}'),
                         width={'size': 4, 'offset': 0, 'justify':'start'},
                     )]))for x in student_names ], \
-               dcc.Graph(figure=fig), \
+               None, \
                styles.CONTENT_STYLE_OFF, \
                styles.CONTENT_STYLE_ON, \
                styles.CONTENT_STYLE_OFF
     elif pathname == "/groups":
-        keys = [x['props']['children'][0]['props']['children']['props']['id'] for x in page_content_two]
-        values = [x['props']['children'][0]['props']['children']['props']['value'] for x in page_content_two]
+        keys = [x['props']['children'][0]['props']['children']['props']['id'] for x in student_roster]
+        values = [x['props']['children'][0]['props']['children']['props']['value'] for x in student_roster]
         df = pd.DataFrame({k:v for (k,v) in zip(keys, values)}.items(), columns=['student_names', 'present']).sort_values('student_names')
         df = df[df.present.eq(True)]
         print(df)
@@ -174,9 +158,8 @@ def render_page_content(pathname, input_period_1, input_cnt_1, input_distrib_1, 
         params = {'period': '1', 'gps':3, 'distrib_lo': False, 'filename': 'student_ledger.xlsx', 'dont_plot': False}
         fig = Plotter(params, df_gps).plot_groups()
 
-        return html.P(f'Selection Idx: {input_period_1}'), \
-               html.P(f'Students in group: {input_cnt_1}'), \
-               html.P(f'Distribute Leftovers: {input_distrib_1}'), \
+        return html.P(f'Students in group: {group_size}'), \
+               html.P(f'Distribute Leftovers: {distribute_leftovers}'), \
                [(dbc.Row([
                     dbc.Col(
                         daq.ToggleSwitch(id=f'{x}', color='#4682b4', value=True),

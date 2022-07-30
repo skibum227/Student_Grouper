@@ -50,7 +50,7 @@ def content_params_builder(periods):
         dbc.Row(
             dbc.Col(
                 dbc.RadioItems(
-                    id="input_period_1",
+                    id="period_selection",
                     className="btn-group",
                     inputClassName="btn-check",
                     labelClassName="btn btn-outline-primary",
@@ -65,14 +65,14 @@ def content_params_builder(periods):
         ),
         dbc.Row(
             dbc.Col(
-                html.Div(id='output_period_1'),
+                html.Br(),
                 width={'size': 4, 'offset': 0}
             )
 
         ),
         dbc.Row(
             dbc.Col(
-                dbc.Input(id="input_cnt_1", placeholder="Number of Students in group", type="number", min=0, max=10, step=1),
+                dbc.Input(id="group_size", placeholder="Number of Students in group", type="number", min=0, max=10, step=1),
                 width={'size': 4, 'offset': 0}
             )
         ),
@@ -85,7 +85,7 @@ def content_params_builder(periods):
         ),
         dbc.Row(
                 dbc.RadioItems(
-                    id="input_distrib_1",
+                    id="distribute_leftovers",
                     className="btn-group",
                     inputClassName="btn-check",
                     labelClassName="btn btn-outline-primary",
@@ -120,23 +120,11 @@ def content_roster_builder(student_names):
                 width={'size': 4, 'offset': 0, 'justify':'start'},
             )
         ]))
-        for x in student_names ], id="page_content_two", style=styles.CONTENT_STYLE_OFF)
+        for x in student_names ], id="student_roster", style=styles.CONTENT_STYLE_OFF)
     return content_roster
 
-def content_table_builder(fig):
-    content_table = html.Div(#[
-        # dbc.Row(
-        #     dbc.Col(
-        #         dcc.Input(id='input_three', value='test input three', type='text'),
-        #         width={'size': 4, 'offset': 0}
-        #     ),
-        # ),
-        # dbc.Row(
-        #     dbc.Col(
-        #         html.Div(id='output_three')
-        #     )
-        # )], 
-        dcc.Graph(figure=fig),
+def content_table_builder():
+    content_table = html.Div(
         id="page-content_three",
         style=styles.CONTENT_STYLE_OFF
     )

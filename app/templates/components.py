@@ -5,7 +5,7 @@ from dash import html, dcc
 import templates.styles as styles
 
 # This is only for the side bar
-def sidebar_builder(name, subtitle):
+def sidebar_component(name, subtitle):
     sidebar = html.Div([
         dbc.Row(
             dbc.Col(
@@ -45,8 +45,22 @@ def sidebar_builder(name, subtitle):
     return sidebar
 
 
-def content_params_builder(periods):
+def content_params_component(periods):
     content_params = html.Div([
+        dbc.Row(
+            dbc.Col(
+                html.Div(
+                    [
+                        html.H3("Select Class Period", className="display-7"),
+                        html.P(
+                            "This will be the class roster that will be grouped..."
+                        ),
+                    ],
+                ),
+                width={'size': 10, 'offset': 0},
+                style={'color':'#d3d3d3'}
+            )
+        ),
         dbc.Row(
             dbc.Col(
                 dbc.RadioItems(
@@ -60,28 +74,67 @@ def content_params_builder(periods):
                     for i, x in enumerate(periods)],
                     value=periods[0],
                 ),
-                width={'size': 4, 'offset': 0}
+                width={'size': 12, 'offset': 0}
             ),
         ),
+        html.Br(),
         dbc.Row(
             dbc.Col(
-                html.Br(),
-                width={'size': 4, 'offset': 0}
-            )
-
-        ),
-        dbc.Row(
-            dbc.Col(
-                dbc.Input(id="group_size", placeholder="Number of Students in group", type="number", min=0, max=10, step=1),
-                width={'size': 4, 'offset': 0}
+                html.Hr(),
+                width={'size': 10, 'offset': 0}
             )
         ),
         dbc.Row(
             dbc.Col(
-                html.Div(id='output_cnt_1'),
+                html.Div(
+                    [
+                        html.H3("Select Group Size", className="display-7"),
+                        html.P(
+                            "This value will be the number of students in each group..."
+                        ),
+                    ],
+                ),
+                width={'size': 10, 'offset': 0},
+                style={'color':'#d3d3d3'}
+            )
+        ),
+        dbc.Row(
+            dbc.Col(
+                # dbc.Input(id="group_size", placeholder="Input a number", type="number", min=0, max=10, step=1),
+                dbc.RadioItems(
+                    id="group_size",
+                    options=[
+                        {"label": "2" , "value": 2},
+                        {"label": "3" , "value": 3},
+                        {"label": "4" , "value": 4},
+                        {"label": "5" , "value": 5},
+                    ],
+                    value=2,
+                    inline=True,
+                 ),
                 width={'size': 4, 'offset': 0}
             )
-
+        ),
+        html.Br(),
+        dbc.Row(
+            dbc.Col(
+                html.Hr(),
+                width={'size': 10, 'offset': 0}
+            )
+        ),
+        dbc.Row(
+            dbc.Col(
+                html.Div(
+                    [
+                        html.H3("Distribute Non-Complete Groups", className="display-7"),
+                        html.P(
+                            "This demarcates what to do if the roster isnt cleanly divisble by the group count..."
+                        ),
+                    ],
+                ),
+                width={'size': 10, 'offset': 0},
+                style={'color':'#d3d3d3'}
+            )
         ),
         dbc.Row(
                 dbc.RadioItems(
@@ -96,34 +149,59 @@ def content_params_builder(periods):
                     ],
                     value=1,
                 ),
-        ),
-        dbc.Row(
-            dbc.Col(
-                html.Div(id='output_distrib_1'),
-                width={'size': 4, 'offset': 0}
-            )
         )], 
         id="page-content_one",
         style=styles.CONTENT_STYLE_ON
     )
     return content_params
 
-def content_roster_builder(student_names):
+def content_roster_component():
     content_roster = html.Div([
-        (dbc.Row([
+        dbc.Row(
             dbc.Col(
-                daq.ToggleSwitch(id=f'{x}', color='#4682b4', value=True),
-                width={'size': 4, 'offset': 0, 'align':'start'},
-            ),
-            dbc.Col(
-                html.P(f'{x}'),
-                width={'size': 4, 'offset': 0, 'justify':'start'},
+                html.Div(
+                    [
+                        html.H3("Update Student Attendence", className="display-7"),
+                        html.P(
+                            "Students not present today will not be factored into the grouping algorithm..."
+                        ),
+                    ],
+                ),
+                width={'size': 10, 'offset': 0},
+                style={'color':'#d3d3d3'},
             )
-        ]))
-        for x in student_names ], id="student_roster", style=styles.CONTENT_STYLE_OFF)
+        ),
+        dbc.Row(
+            dbc.Col(
+                html.Hr(),
+                width={'size': 10, 'offset': 0}
+            )
+        ),
+        html.Br(),
+        html.Div(
+            id="student_roster"
+            # style=styles.CONTENT_STYLE_OFF
+        )],
+        id='student_roster_page',
+        style=styles.CONTENT_STYLE_OFF
+    )
+
     return content_roster
 
-def content_table_builder():
+def roster_builder(students_dict):
+    roster = [dbc.Row([
+                dbc.Col(
+                    daq.ToggleSwitch(id=f'{x}', color='#4682b4', value=True),
+                    width={'size': 4, 'offset': 0, 'align':'start'},
+                ),
+                dbc.Col(
+                    html.P(f'{x}'),
+                    width={'size': 4, 'offset': 0, 'justify':'start'},
+                )
+            ]) for x in students_dict]
+    return roster
+
+def content_table_component():
     content_table = html.Div(
         id="page-content_three",
         style=styles.CONTENT_STYLE_OFF

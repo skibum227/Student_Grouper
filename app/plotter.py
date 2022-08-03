@@ -84,7 +84,7 @@ class Plotter(object):
             ))
         ])
 
-        fig.update_layout(height=2000)
+        fig.update_layout(height=2000, paper_bgcolor='#222')
         return fig
 
 if __name__ == '__main__':

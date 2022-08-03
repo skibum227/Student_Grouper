@@ -52,9 +52,7 @@ def content_params_component(periods):
                 html.Div(
                     [
                         html.H3("Select Class Period", className="display-7"),
-                        html.P(
-                            "This will be the class roster that will be grouped..."
-                        ),
+                        html.P("This will be the class roster that will be grouped..."),
                     ],
                 ),
                 width={'size': 10, 'offset': 0},
@@ -89,9 +87,7 @@ def content_params_component(periods):
                 html.Div(
                     [
                         html.H3("Select Group Size", className="display-7"),
-                        html.P(
-                            "This value will be the number of students in each group..."
-                        ),
+                        html.P("This value will be the number of students in each group..."),
                     ],
                 ),
                 width={'size': 10, 'offset': 0},
@@ -100,19 +96,13 @@ def content_params_component(periods):
         ),
         dbc.Row(
             dbc.Col(
-                # dbc.Input(id="group_size", placeholder="Input a number", type="number", min=0, max=10, step=1),
                 dbc.RadioItems(
                     id="group_size",
-                    options=[
-                        {"label": "2" , "value": 2},
-                        {"label": "3" , "value": 3},
-                        {"label": "4" , "value": 4},
-                        {"label": "5" , "value": 5},
-                    ],
+                    options=[ {"label": f"{x}" , "value": x} for x in range(2,11)],
                     value=2,
                     inline=True,
                  ),
-                width={'size': 4, 'offset': 0}
+                width={'size': 10, 'offset': 0}
             )
         ),
         html.Br(),
@@ -127,9 +117,7 @@ def content_params_component(periods):
                 html.Div(
                     [
                         html.H3("Distribute Non-Complete Groups", className="display-7"),
-                        html.P(
-                            "This demarcates what to do if the roster isnt cleanly divisble by the group count..."
-                        ),
+                        html.P("This demarcates what to do if the roster isnt cleanly divisble by the group count..."),
                     ],
                 ),
                 width={'size': 10, 'offset': 0},
@@ -162,9 +150,7 @@ def content_roster_component():
                 html.Div(
                     [
                         html.H3("Update Student Attendence", className="display-7"),
-                        html.P(
-                            "Students not present today will not be factored into the grouping algorithm..."
-                        ),
+                        html.P("Students not present today will not be factored into the grouping algorithm..."),
                     ],
                 ),
                 width={'size': 10, 'offset': 0},

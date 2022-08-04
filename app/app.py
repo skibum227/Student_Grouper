@@ -27,10 +27,11 @@ server = app.server
 # APP CONSTANTS
 ###############
 
-name = 'Mrs. Herr'
-subtitle = 'The Student Grouper'
+title = 'Student Grouper'
+subtitle = 'Room 1234'
 stu_dict = pd.read_excel('student_ledger.xlsx', sheet_name=None)
 periods = list(stu_dict.keys())
+prelim_student_roster = list(stu_dict[periods[0]].student_names.values)
 
 ######################
 # HEALTH CHECK ENPONTS
@@ -59,13 +60,13 @@ server.add_url_rule("/environment", "environment", view_func=lambda: envdump.run
 ################
 
 # Build the sidebar 
-sidebar = components.sidebar_component(name, subtitle)
+sidebar = components.sidebar_component(title, subtitle)
 
 # Build the params content
 content_params = components.content_params_component(periods)
 
 # Build the roster content
-content_roster = components.content_roster_component()
+content_roster = components.content_roster_component(prelim_student_roster)
 
 # Build the table content
 content_table = components.content_table_component()
@@ -139,11 +140,13 @@ def render_page_content(pathname, period_selection, group_size, distribute_lefto
 
         elif pathname == "/groups":
 
-            # Create the input params for the grouping and plotting algorithms 
+            # If the groups size is greater than the number of students, make the group size that number
+            group_size_adj = len(df) if group_size >= len(df) else group_size
+            # Create the input params for the grouping and plotting algorithms
             params = {
                         'student_df': df,
                         'period': period_selection.split('_')[1],
-                        'gps':group_size,
+                        'gps':group_size_adj,
                         'distrib_lo': True if distribute_leftovers == 1 else False,
                      } 
             # Run the grouping algorithm
@@ -171,4 +174,4 @@ def render_page_content(pathname, period_selection, group_size, distribute_lefto
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5050, debug=True)
+    app.run(host='0.0.0.0', port=5050, debug=False)

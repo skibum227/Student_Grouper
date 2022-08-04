@@ -2,15 +2,7 @@ import plotly.graph_objects as go
 import plotly
 import seaborn as sns
 import random
-# import dash
-# import dash_core_components as dcc
-# import dash_html_components as html
 import json
-
-# Pastel color list, randomized with white in front
-color_list = sns.color_palette("pastel", as_cmap=True)
-random.shuffle(sns.color_palette("pastel", as_cmap=True))
-color_list = ['white'] + color_list
 
 """
 This class builds a color palette out of 11 colors then plots the table
@@ -27,7 +19,7 @@ class Plotter(object):
 
     def _build_expanded_color_palette(self, max_groups):
 
-        # Randomize the colors with white always first...
+        # Randomize the Pastel colors with white always first...
         color_list = sns.color_palette("pastel", as_cmap=True)
         random.shuffle(sns.color_palette("pastel", as_cmap=True))
         color_list = ['white'] + color_list
@@ -35,7 +27,6 @@ class Plotter(object):
         # First get full dups of list
         dup_color_list = []
         for x in range(max_groups // len(color_list)):
-            print(x)
             dup_color_list.append(color_list)
         dup_color_list = [val for sublist in dup_color_list for val in sublist]
 

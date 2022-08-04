@@ -9,7 +9,7 @@ def sidebar_component(name, subtitle):
     sidebar = html.Div([
         dbc.Row(
             dbc.Col(
-                html.H2(name, className="display-4"),
+                html.H2(name, className="display-4", style={'text-align':'center'}),
                 width={'size': 12, 'offset': 0}
             )
         ),
@@ -21,8 +21,8 @@ def sidebar_component(name, subtitle):
         ),
         dbc.Row(
             dbc.Col(
-                html.P(subtitle, className="lead"),
-                width={'size': 12, 'offset': '1'},
+                html.P(subtitle, className="lead", style={'text-align':'center', 'font-size':30}),
+                width={'size': 12, 'offset': 0},
             ),
         ),
         dbc.Row(
@@ -143,7 +143,7 @@ def content_params_component(periods):
     )
     return content_params
 
-def content_roster_component():
+def content_roster_component(student_roster_list):
     content_roster = html.Div([
         dbc.Row(
             dbc.Col(
@@ -165,6 +165,7 @@ def content_roster_component():
         ),
         html.Br(),
         html.Div(
+            roster_builder(student_roster_list),
             id="student_roster"
         )],
         id='student_roster_page',
@@ -173,7 +174,7 @@ def content_roster_component():
 
     return content_roster
 
-def roster_builder(students_dict):
+def roster_builder(student_roster_list):
     roster = [dbc.Row([
                 dbc.Col(
                     daq.ToggleSwitch(id=f'{x}', color='#4682b4', value=True),
@@ -183,7 +184,7 @@ def roster_builder(students_dict):
                     html.P(f'{x}'),
                     width={'size': 4, 'offset': 0, 'justify':'start'},
                 )
-            ]) for x in students_dict]
+            ]) for x in student_roster_list]
     return roster
 
 def content_table_component():

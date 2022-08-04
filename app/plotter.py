@@ -2,9 +2,9 @@ import plotly.graph_objects as go
 import plotly
 import seaborn as sns
 import random
-import dash
-import dash_core_components as dcc
-import dash_html_components as html
+# import dash
+# import dash_core_components as dcc
+# import dash_html_components as html
 import json
 
 # Pastel color list, randomized with white in front
@@ -26,6 +26,11 @@ class Plotter(object):
         self.dont_plot = self.params.get('dont_plot')
 
     def _build_expanded_color_palette(self, max_groups):
+
+        # Randomize the colors with white always first...
+        color_list = sns.color_palette("pastel", as_cmap=True)
+        random.shuffle(sns.color_palette("pastel", as_cmap=True))
+        color_list = ['white'] + color_list
 
         # First get full dups of list
         dup_color_list = []

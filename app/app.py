@@ -139,17 +139,17 @@ def render_page_content(pathname, period_selection, group_size, distribute_lefto
 
         elif pathname == "/groups":
 
-            distrib_lo = True if distribute_leftovers == 1 else False
             # Create the input params for the grouping and plotting algorithms 
             params = {
-                'student_df': df,
-                'period': period_selection.split('_')[1],
-                'gps':group_size,
-                'distrib_lo': distrib_lo, 'filename': 'student_ledger.xlsx'} 
+                        'student_df': df,
+                        'period': period_selection.split('_')[1],
+                        'gps':group_size,
+                        'distrib_lo': True if distribute_leftovers == 1 else False,
+                     } 
+            # Run the grouping algorithm
             grouper = Grouper(params)
             df_gps = grouper.group_students()
-
-            # params = {'period': '1', 'gps':3, 'distrib_lo': False, 'filename': 'student_ledger.xlsx', 'dont_plot': False}
+            # Create the table figure
             fig = Plotter(params, df_gps).plot_groups()
 
             return (

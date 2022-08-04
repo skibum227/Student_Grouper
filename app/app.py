@@ -19,6 +19,8 @@ import templates.components as components
 ################
 
 app = dash.Dash(external_stylesheets=[dbc.themes.DARKLY])
+secret = secrets.token_urlsafe(32)
+app.secret_key = secret
 server = app.server
 
 ###############
@@ -29,7 +31,6 @@ name = 'Mrs. Herr'
 subtitle = 'The Student Grouper'
 stu_dict = pd.read_excel('student_ledger.xlsx', sheet_name=None)
 periods = list(stu_dict.keys())
-
 
 ######################
 # HEALTH CHECK ENPONTS
@@ -80,10 +81,10 @@ app.layout = html.Div([dcc.Location(id="ip"), sidebar, content_params, content_r
 
 @app.callback(
      Output(component_id="student_roster", component_property="children"),
-     Output(component_id="page-content_three", component_property="children"),
+     Output(component_id="grouper_table", component_property="children"),
      Output(component_id="page-content_one", component_property="style"),
      Output(component_id="student_roster_page", component_property="style"),
-     Output(component_id="page-content_three", component_property="style"),
+     Output(component_id="grouper_table_page", component_property="style"),
 
      Input(component_id="ip", component_property="pathname"),
      Input(component_id="period_selection", component_property="value"),
@@ -108,10 +109,23 @@ def render_page_content(pathname, period_selection, group_size, distribute_lefto
                )
 
     elif pathname in ("/roster", "/groups"):
-        print(student_roster)
-        keys = [x['props']['children'][0]['props']['children']['props']['id'] for x in student_roster]
-        values = [x['props']['children'][0]['props']['children']['props']['value'] for x in student_roster]
-        df = pd.DataFrame({k:v for (k,v) in zip(keys, values)}.items(), columns=['student_names', 'present']).sort_values('student_names')
+
+        # This is the result of wanting it to look nice, each student is in a different oobject
+        keys = [
+                    x['props']['children'][0]['props']['children']['props']['id'] 
+                    for x in student_roster
+               ]
+        values = [
+                    x['props']['children'][0]['props']['children']['props']['value']
+                    for x in student_roster
+                 ]
+
+        # Zips together all of the disconjointed student attendance data from above so its usable
+        df = pd.DataFrame(
+                {k:v for (k,v) in zip(keys, values)}.items(),
+                columns=['student_names', 'present']
+             )
+        df.sort_values('student_names', inplace=True)
         df = df[df.present.eq(True)]
 
         if pathname == "/roster":
@@ -126,11 +140,16 @@ def render_page_content(pathname, period_selection, group_size, distribute_lefto
         elif pathname == "/groups":
 
             distrib_lo = True if distribute_leftovers == 1 else False
-            params = {'student_df': df, 'period': period_selection, 'gps':group_size, 'distrib_lo': distrib_lo, 'filename': 'student_ledger.xlsx'} 
+            # Create the input params for the grouping and plotting algorithms 
+            params = {
+                'student_df': df,
+                'period': period_selection.split('_')[1],
+                'gps':group_size,
+                'distrib_lo': distrib_lo, 'filename': 'student_ledger.xlsx'} 
             grouper = Grouper(params)
             df_gps = grouper.group_students()
 
-            params = {'period': '1', 'gps':3, 'distrib_lo': False, 'filename': 'student_ledger.xlsx', 'dont_plot': False}
+            # params = {'period': '1', 'gps':3, 'distrib_lo': False, 'filename': 'student_ledger.xlsx', 'dont_plot': False}
             fig = Plotter(params, df_gps).plot_groups()
 
             return (
@@ -150,19 +169,6 @@ def render_page_content(pathname, period_selection, group_size, distribute_lefto
         ]
     )
 
-secret = secrets.token_urlsafe(32)
-app.secret_key = secret
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5050, debug=True)
-
-
-
-
-
-
-
-
-
-
-

@@ -61,7 +61,3 @@ if __name__ == '__main__':
     test = Initializer()
     test.print_params()
     test.test_params()
-
-
-
-

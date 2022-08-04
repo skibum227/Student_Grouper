@@ -51,7 +51,7 @@ class Plotter(object):
         # Create the mapping
         color_map = {x: exp_color_list[x] for x in range(num_colors)}
 
-        # Run the mapping
+        # Run the mapping#
         df['color'] = df['student_group'].map(color_map)
         return df
 
@@ -84,19 +84,5 @@ class Plotter(object):
             ))
         ])
 
-        fig.update_layout(height=2000, paper_bgcolor='#222')
+        fig.update_layout(height=2000, paper_bgcolor='#222', margin=dict(l=0,r=0,b=0,t=0),)
         return fig
-
-if __name__ == '__main__':
-
-    import pandas as pd
-    params = {'period': '1', 'gps':3, 'distrib_lo': False, 'filename': 'student_ledger.xlsx', 'dont_plot': False}
-    df = pd.DataFrame({'student_names':['a', 'b', 'c'], 'student_group':[0,0,1]})
-    Plotter(params, df).plot_groups()
-
-
-
-
-
-
-

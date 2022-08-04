@@ -91,12 +91,3 @@ class Grouper(object):
             for y in temp:
                 print(f'   {y}')
             print('')
-
-
-if __name__ == '__main__':
-
-    params = {'period': 'example', 'gps':3, 'distrib_lo': False, 'filename': 'student_ledger.xlsx'}
-    grouper = Grouper(params)
-    df = grouper.group_students()
-    grouper.print_student_groups(df) 
-

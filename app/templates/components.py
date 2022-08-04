@@ -40,7 +40,7 @@ def sidebar_component(name, subtitle):
             pills=True,
         )],
         style=styles.SIDEBAR_STYLE,
-        id='sidebar-content'
+        id='sidebar_content'
     )
     return sidebar
 
@@ -68,7 +68,7 @@ def content_params_component(periods):
                     labelClassName="btn btn-outline-primary",
                     labelCheckedClassName="active",
                     options=[
-                        {"label":x, "value":x}
+                        {"label":f"Period {x.split('_')[1]}", "value":x} # +2 b/c periods start at 2
                     for i, x in enumerate(periods)],
                     value=periods[0],
                 ),
@@ -166,7 +166,6 @@ def content_roster_component():
         html.Br(),
         html.Div(
             id="student_roster"
-            # style=styles.CONTENT_STYLE_OFF
         )],
         id='student_roster_page',
         style=styles.CONTENT_STYLE_OFF
@@ -188,12 +187,30 @@ def roster_builder(students_dict):
     return roster
 
 def content_table_component():
-    content_table = html.Div(
-        id="page-content_three",
+    content_table = html.Div([
+        dbc.Row(
+            dbc.Col(
+                html.Div(
+                    [
+                        html.H3("Studnet Groups", className="display-7"),
+                        html.P("Come back to page to select another RANDOM order... "),
+                    ],
+                ),
+                width={'size': 10, 'offset': 0},
+                style={'color':'#d3d3d3'},
+            )
+        ),
+        dbc.Row(
+            dbc.Col(
+                html.Hr(),
+                width={'size': 12, 'offset': 0}
+            )
+        ),
+        # html.Br(),
+        html.Div(
+            id="grouper_table"
+        )],
+        id='grouper_table_page',
         style=styles.CONTENT_STYLE_OFF
     )
     return content_table
-
-
-
-

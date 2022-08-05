@@ -52,7 +52,7 @@ locals {
 locals {
   spec_map_exposed = {
     for instance in local.exposed_specs :
-    "${instance.name}-${instance.job_type}-${instance.version}" => instance
+    "${instance.name}-${instance.job_type}-${instance.image_version}" => instance
   }
   #spec_map = merge(local.spec_map_batch, local.spec_map_exposed)
   spec_map = local.spec_map_exposed

@@ -2,15 +2,7 @@ import plotly.graph_objects as go
 import plotly
 import seaborn as sns
 import random
-import dash
-import dash_core_components as dcc
-import dash_html_components as html
 import json
-
-# Pastel color list, randomized with white in front
-color_list = sns.color_palette("pastel", as_cmap=True)
-random.shuffle(sns.color_palette("pastel", as_cmap=True))
-color_list = ['white'] + color_list
 
 """
 This class builds a color palette out of 11 colors then plots the table
@@ -27,10 +19,14 @@ class Plotter(object):
 
     def _build_expanded_color_palette(self, max_groups):
 
+        # Randomize the Pastel colors with white always first...
+        color_list = sns.color_palette("pastel", as_cmap=True)
+        random.shuffle(sns.color_palette("pastel", as_cmap=True))
+        color_list = ['white'] + color_list
+
         # First get full dups of list
         dup_color_list = []
         for x in range(max_groups // len(color_list)):
-            print(x)
             dup_color_list.append(color_list)
         dup_color_list = [val for sublist in dup_color_list for val in sublist]
 
@@ -51,7 +47,7 @@ class Plotter(object):
         # Create the mapping
         color_map = {x: exp_color_list[x] for x in range(num_colors)}
 
-        # Run the mapping
+        # Run the mapping#
         df['color'] = df['student_group'].map(color_map)
         return df
 
@@ -82,25 +78,7 @@ class Plotter(object):
                 height=40,
                 font=dict(color='black', size=30)
             ))
-         ])
-        fig.update_layout(width=2000, height=2000)
+        ])
 
-        graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-
-        return graphJSON
-        # fig.show()
-
-
-if __name__ == '__main__':
-
-    import pandas as pd
-    params = {'period': '1', 'gps':3, 'distrib_lo': False, 'filename': 'student_ledger.xlsx', 'dont_plot': False}
-    df = pd.DataFrame({'student_names':['a', 'b', 'c'], 'student_group':[0,0,1]})
-    Plotter(params, df).plot_groups()
-
-
-
-
-
-
-
+        fig.update_layout(height=2000, paper_bgcolor='#222', margin=dict(l=0,r=0,b=0,t=0),)
+        return fig

@@ -25,14 +25,6 @@ module "endpoints" {
   version            = "3.7.0"
 
   endpoints = {
-    ecr = {
-      service             = "ecr"
-      private_dns_enabled = true
-      subnet_ids          = module.vpc.private_subnets
-      tags = {
-        Name = "${var.resource_prefix}-ecrapi-vpc-endpoint"
-      }
-    },
     s3 = {
       service         = "s3"
       service_type    = "Gateway"

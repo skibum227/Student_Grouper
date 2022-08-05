@@ -193,7 +193,7 @@ def content_table_component():
             dbc.Col(
                 html.Div(
                     [
-                        html.H3("Studnet Groups", className="display-7"),
+                        html.H3("Student Groups", className="display-7"),
                         html.P("Come back to page to select another RANDOM order... "),
                     ],
                 ),

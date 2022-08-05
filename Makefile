@@ -1,10 +1,10 @@
 build:
 	@echo 'Building to run on Mac M1...'
-	@docker build -t student_grouper:latest .
+	@docker build -t student-grouper-application:latest .
 
 build-aws:
 	@echo 'Building in deployable state for AWS Fargate...'
-	@docker buildx build --platform=linux/amd64 -t student_grouper:latest .
+	@docker buildx build --platform=linux/amd64 -t student-grouper-application:latest .
 
 run: 
 	@echo 'Running the container...'

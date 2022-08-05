@@ -58,6 +58,7 @@ server.add_url_rule("/environment", "environment", view_func=lambda: envdump.run
 ################
 # APP COMPONENTS
 ################
+app.title = 'The Student Grouper'
 
 # Build the sidebar 
 sidebar = components.sidebar_component(title, subtitle)

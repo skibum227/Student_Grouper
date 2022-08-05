@@ -21,7 +21,7 @@ def sidebar_component(name, subtitle):
         ),
         dbc.Row(
             dbc.Col(
-                html.P(subtitle, className="lead", style={'text-align':'center', 'font-size':30}),
+                html.P(f'- {subtitle} -', className="lead", style={'text-align':'center', 'font-size':30}),
                 width={'size': 12, 'offset': 0},
             ),
         ),
@@ -32,9 +32,9 @@ def sidebar_component(name, subtitle):
             ),
         ),
         dbc.Nav([
-                dbc.NavLink("Grouping Parameters", href="/", active="exact"),
-                dbc.NavLink("Update Roster", href="/roster", active="exact"),
-                dbc.NavLink("Student Groups", href="/groups", active="exact"),
+                dbc.NavLink("Grouping Parameters", href="/", active="exact", style={"font-size":20}),
+                dbc.NavLink("Update Roster", href="/roster", active="exact", style={"font-size":20}),
+                dbc.NavLink("Student Groups", href="/groups", active="exact", style={"font-size":20}),
             ],
             vertical=True,
             pills=True,
@@ -52,7 +52,7 @@ def content_params_component(periods):
                 html.Div(
                     [
                         html.H3("Select Class Period", className="display-7"),
-                        html.P("This will be the class roster that will be grouped..."),
+                        # html.P("This will be the class roster that will be grouped..."),
                     ],
                 ),
                 width={"size": 10, "offset": 0},
@@ -87,7 +87,7 @@ def content_params_component(periods):
                 html.Div(
                     [
                         html.H3("Select Group Size", className="display-7"),
-                        html.P("This value will be the number of students in each group..."),
+                        # html.P("This value will be the number of students in each group..."),
                     ],
                 ),
                 width={"size": 10, "offset": 0},
@@ -117,7 +117,7 @@ def content_params_component(periods):
                 html.Div(
                     [
                         html.H3("Distribute Non-Complete Groups", className="display-7"),
-                        html.P("This demarcates what to do if the roster isn't cleanly divisible by the group count..."),
+                        # html.P("This demarcates what to do if the roster isn't cleanly divisible by the group count..."),
                     ],
                 ),
                 width={"size": 10, "offset": 0},
@@ -150,7 +150,7 @@ def content_roster_component(student_roster_list):
                 html.Div(
                     [
                         html.H3("Update Student Attendence", className="display-7"),
-                        html.P("Students not present today will not be factored into the grouping algorithm..."),
+                        # html.P("Students not present today will not be factored into the grouping algorithm..."),
                     ],
                 ),
                 width={"size": 10, "offset": 0},
@@ -193,8 +193,8 @@ def content_table_component():
             dbc.Col(
                 html.Div(
                     [
-                        html.H3("Student Groups", className="display-7"),
-                        html.P("Come back to page to select another RANDOM order... "),
+                        html.H3("Student Groups Table", className="display-7"),
+                        # html.P("Come back to page to select another RANDOM order... "),
                     ],
                 ),
                 width={"size": 10, "offset": 0},

@@ -55,8 +55,8 @@ def content_params_component(periods):
                         html.P("This will be the class roster that will be grouped..."),
                     ],
                 ),
-                width={'size': 10, 'offset': 0},
-                style={'color':'#d3d3d3'}
+                width={"size": 10, "offset": 0},
+                style={"color":"#d3d3d3"}
             )
         ),
         dbc.Row(
@@ -79,7 +79,7 @@ def content_params_component(periods):
         dbc.Row(
             dbc.Col(
                 html.Hr(),
-                width={'size': 10, 'offset': 0}
+                width={"size": 10, "offset": 0}
             )
         ),
         dbc.Row(
@@ -90,8 +90,8 @@ def content_params_component(periods):
                         html.P("This value will be the number of students in each group..."),
                     ],
                 ),
-                width={'size': 10, 'offset': 0},
-                style={'color':'#d3d3d3'}
+                width={"size": 10, "offset": 0},
+                style={"color":"#d3d3d3"}
             )
         ),
         dbc.Row(
@@ -102,14 +102,14 @@ def content_params_component(periods):
                     value=2,
                     inline=True,
                  ),
-                width={'size': 10, 'offset': 0}
+                width={"size": 10, "offset": 0}
             )
         ),
         html.Br(),
         dbc.Row(
             dbc.Col(
                 html.Hr(),
-                width={'size': 10, 'offset': 0}
+                width={"size": 10, "offset": 0}
             )
         ),
         dbc.Row(
@@ -117,11 +117,11 @@ def content_params_component(periods):
                 html.Div(
                     [
                         html.H3("Distribute Non-Complete Groups", className="display-7"),
-                        html.P("This demarcates what to do if the roster isnt cleanly divisble by the group count..."),
+                        html.P("This demarcates what to do if the roster isn't cleanly divisible by the group count..."),
                     ],
                 ),
-                width={'size': 10, 'offset': 0},
-                style={'color':'#d3d3d3'}
+                width={"size": 10, "offset": 0},
+                style={"color":"#d3d3d3"}
             )
         ),
         dbc.Row(
@@ -138,7 +138,7 @@ def content_params_component(periods):
                     value=1,
                 ),
         )], 
-        id="page-content_one",
+        id="parameters_page",
         style=styles.CONTENT_STYLE_ON
     )
     return content_params
@@ -153,14 +153,14 @@ def content_roster_component(student_roster_list):
                         html.P("Students not present today will not be factored into the grouping algorithm..."),
                     ],
                 ),
-                width={'size': 10, 'offset': 0},
-                style={'color':'#d3d3d3'},
+                width={"size": 10, "offset": 0},
+                style={"color":"#d3d3d3"},
             )
         ),
         dbc.Row(
             dbc.Col(
                 html.Hr(),
-                width={'size': 10, 'offset': 0}
+                width={"size": 10, "offset": 0}
             )
         ),
         html.Br(),
@@ -177,12 +177,12 @@ def content_roster_component(student_roster_list):
 def roster_builder(student_roster_list):
     roster = [dbc.Row([
                 dbc.Col(
-                    daq.ToggleSwitch(id=f'{x}', color='#4682b4', value=True),
-                    width={'size': 4, 'offset': 0, 'align':'start'},
+                    daq.BooleanSwitch(id=f"{x}", color="#4682b4", on=True),
+                    width={"size": 4, "offset": 0, "align":"start"},
                 ),
                 dbc.Col(
-                    html.P(f'{x}'),
-                    width={'size': 4, 'offset': 0, 'justify':'start'},
+                    html.P(f"{x}"),
+                    width={"size": 4, "offset": 0, "justify":"start"},
                 )
             ]) for x in student_roster_list]
     return roster
@@ -197,21 +197,21 @@ def content_table_component():
                         html.P("Come back to page to select another RANDOM order... "),
                     ],
                 ),
-                width={'size': 10, 'offset': 0},
-                style={'color':'#d3d3d3'},
+                width={"size": 10, "offset": 0},
+                style={"color":"#d3d3d3"},
             )
         ),
         dbc.Row(
             dbc.Col(
                 html.Hr(),
-                width={'size': 12, 'offset': 0}
+                width={"size": 12, "offset": 0}
             )
         ),
         # html.Br(),
         html.Div(
             id="grouper_table"
         )],
-        id='grouper_table_page',
+        id="grouper_table_page",
         style=styles.CONTENT_STYLE_OFF
     )
     return content_table

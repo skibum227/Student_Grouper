@@ -29,12 +29,12 @@ server = app.server
 
 title = 'Student Grouper'
 subtitle = 'Room 1234'
-stu_dict = pd.read_excel('student_ledger.xlsx', sheet_name=None)
+stu_dict = pd.read_excel("student_ledger.xlsx", sheet_name=None)
 periods = list(stu_dict.keys())
 prelim_student_roster = list(stu_dict[periods[0]].student_names.values)
 
 ######################
-# HEALTH CHECK ENPONTS
+# HEALTH CHECK ENDPOINTS
 ######################
 
 health = HealthCheck()
@@ -44,7 +44,7 @@ def app_availible():
     return True, "App good to go!"
 
 def application_data():
-    return {"maintainer": "Skibum Woodworks Web Developement Division",
+    return {"maintainer": "Skibum Woodworks Web Development Division",
             "git_repo": "https://github.com/skibum227/Student_Grouper"}
 
 health.add_check(app_availible)
@@ -83,7 +83,7 @@ app.layout = html.Div([dcc.Location(id="ip"), sidebar, content_params, content_r
 @app.callback(
      Output(component_id="student_roster", component_property="children"),
      Output(component_id="grouper_table", component_property="children"),
-     Output(component_id="page-content_one", component_property="style"),
+     Output(component_id="parameters_page", component_property="style"),
      Output(component_id="student_roster_page", component_property="style"),
      Output(component_id="grouper_table_page", component_property="style"),
 
@@ -95,7 +95,7 @@ app.layout = html.Div([dcc.Location(id="ip"), sidebar, content_params, content_r
 )
 def render_page_content(pathname, period_selection, group_size, distribute_leftovers, student_roster):
 
-    # Generate the df for only the partiuclar period 
+    # Generate the df for only the particular period 
     df = pd.DataFrame(stu_dict[period_selection]).sort_values('student_names')
     # The list of student names
     student_names = df['student_names'].values.tolist()
@@ -111,22 +111,22 @@ def render_page_content(pathname, period_selection, group_size, distribute_lefto
 
     elif pathname in ("/roster", "/groups"):
 
-        # This is the result of wanting it to look nice, each student is in a different oobject
+        # This is the result of wanting it to look nice, each student is in a different object
         keys = [
-                    x['props']['children'][0]['props']['children']['props']['id'] 
+                    x["props"]["children"][0]["props"]["children"]["props"]["id"] 
                     for x in student_roster
                ]
         values = [
-                    x['props']['children'][0]['props']['children']['props']['value']
+                    x["props"]["children"][0]["props"]["children"]["props"]["on"]
                     for x in student_roster
                  ]
 
-        # Zips together all of the disconjointed student attendance data from above so its usable
+        # Zips together all of the disjointed student attendance data from above so its usable
         df = pd.DataFrame(
                 {k:v for (k,v) in zip(keys, values)}.items(),
-                columns=['student_names', 'present']
+                columns=["student_names", "present"]
              )
-        df.sort_values('student_names', inplace=True)
+        df.sort_values("student_names", inplace=True)
         df = df[df.present.eq(True)]
 
         if pathname == "/roster":
@@ -141,7 +141,7 @@ def render_page_content(pathname, period_selection, group_size, distribute_lefto
         elif pathname == "/groups":
 
             # If the groups size is greater than the number of students, make the group size that number
-            group_size_adj = len(df) if group_size >= len(df) else group_size
+            group_size_adj = len(df) if group_size > len(df) else group_size
             # Create the input params for the grouping and plotting algorithms
             params = {
                         'student_df': df,
@@ -173,5 +173,5 @@ def render_page_content(pathname, period_selection, group_size, distribute_lefto
     )
 
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5050, debug=True)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5050, debug=True)

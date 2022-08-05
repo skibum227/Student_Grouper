@@ -1,4 +1,4 @@
-# This is only for the sidebar - alwasy on
+# This is only for the sidebar - always on
 SIDEBAR_STYLE = {
     "position": "fixed",
     "top": 0,

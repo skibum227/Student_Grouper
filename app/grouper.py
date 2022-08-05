@@ -11,8 +11,8 @@ class Grouper(object):
 
         # This parameter if true will add leftover students to other groups
         #   to preserve the desired groups. If false will, make create a smaller group.
-        # The greedy grouper automaticaly distributes so if a smaller groups is requried, 
-        #   the extra students need to be handled specicically.
+        # The greedy grouper automatically distributes so if a smaller groups is requrred, 
+        #   the extra students need to be handled specifically.
         self.distrib_lo = params.get('distrib_lo')
 
         self.student_df = params.get('student_df')
@@ -21,7 +21,7 @@ class Grouper(object):
 
     def _dont_distribute_leftovers(self, df):
 
-        # This assignes the leftovers to the "extra" leftover group
+        # This assigns the leftovers to the "extra" leftover group
         for x in range(len(df) % self.gps, 0, -1):
                 df.iloc[-x, df.columns.get_loc('student_group')] = self.group_deliniator
 
@@ -68,7 +68,7 @@ class Grouper(object):
 
     def print_student_groups(self, df):
 
-        # Helper funtion for error hunting
+        # Helper function for error hunting
         for x in range(self.group_deliniator if self.distrib_lo else self.group_deliniator + 1):
             temp = df.loc[df.student_group.eq(x)]['student_names'].to_list()
             print(f'Group Number {x} ...')

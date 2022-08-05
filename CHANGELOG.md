@@ -17,6 +17,7 @@ FEATURES, ENHANCEMENTS, BUG FIXES, DOCS, BREAKING CHANGES, NOTES
 - Updated the make file so it isn't dumb 
 - Added a dedicated health check endpoint
 - Completely re-worked the UI so it looks professional 
+- Added browser title and flavicon
 
 ## v0.0.1
 - Initial launch 

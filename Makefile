@@ -4,7 +4,7 @@ build:
 
 build-aws:
 	@echo 'Building in deployable state for AWS Fargate...'
-	@docker buildx build --platform=linux/amd64 -t student-grouper-application:latest .
+	@docker buildx build --platform=linux/amd64 -t student-grouper-application:v3 .
 
 run: 
 	@echo 'Running the container...'

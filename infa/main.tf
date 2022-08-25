@@ -32,9 +32,9 @@ locals {
 locals {
   exposed_specs = [
     {
-      name              = "student_grouper"
+      name              = "student-grouper"
       job_type          = "application"
-      image_version     = "latest"
+      image_version     = "v3"
       cpu               = 0.25
       memory            = 0.5
       container_port    = local.container_port

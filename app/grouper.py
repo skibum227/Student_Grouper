@@ -51,8 +51,10 @@ class Grouper(object):
         # - if the grouping is 3 and there is one student left over, automatically make 2 groups of 2 (requested)
 
         if self.gps == 3 and len(df) % self.gps == 1 and not self.distrib_lo:
+            # This is a very specific ask by Alex
             print('[GROUPER] One person left over in groups of 3, making 2 groups of 2 ...')
             df.iloc[0,3] = self.group_deliniator
+            df.iloc[-1,3] = self.group_deliniator
 
         elif not self.distrib_lo:
             print('[GROUPER] Left over Students have NOT been distributed ...')

@@ -1,4 +1,8 @@
 # TODO
+- Add scheduling to infa code
+	- in console
+	- https://peterwadid1.medium.com/start-stop-ecs-fargate-tasks-using-lambda-cloudwatch-events-rules-b453aad4e1f6
+	- https://peterwadid1.medium.com/start-stop-ecs-fargate-tasks-using-lambda-cloudwatch-events-rules-b453aad4e1f6
 - Add a DB
 - Add a ci/cd tool
 

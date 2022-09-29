@@ -12,7 +12,7 @@ module "endpoint_sg" {
   egress_rules       = ["all-all"]
 
   ingress_cidr_blocks = module.vpc.private_subnets_cidr_blocks
-  ingress_rules = ["https-443-tcp"]
+  ingress_rules       = ["https-443-tcp"]
 }
 
 # Security group to limit trafic to only certain IPs

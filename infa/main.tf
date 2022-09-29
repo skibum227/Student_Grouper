@@ -18,14 +18,14 @@ terraform {
 }
 
 provider "aws" {
-  region     = local.region
-  profile    = "personal"
+  region  = local.region
+  profile = "personal"
 }
 
 # General Locals
 locals {
-  region          = "us-east-1"
-  container_port  = 5050
+  region         = "us-east-1"
+  container_port = 5050
 }
 
 # Definition for each task to be ran by ECS Fargate

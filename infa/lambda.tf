@@ -5,7 +5,7 @@ data "archive_file" "zip_the_python_code" {
     output_path = "lambda_functions/ecs_control.zip"
 }
 
-resource "aws_lambda_function" "terraform_lambda_func" {
+resource "aws_lambda_function" "lambda_ecs_control" {
     filename      = "lambda_functions/ecs_control.zip"
     function_name = "ECS_Service_Control_Lambda_Function"
     role          = aws_iam_role.lambda_role.arn

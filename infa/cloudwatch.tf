@@ -1,17 +1,19 @@
 # Resource docs...
 #   https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule
 
-# These Eventbridge rules control bringing up and shutting down all running servivces
+# These Eventbridge rules control bringing up and shutting down all running services
 #   and tasks during certain hours to save money
 resource "aws_cloudwatch_event_rule" "lambda_start" {
   name                = "${var.resource_prefix}lambda-start-trigger"
   description         = "hits lambda for the start function"
+  is_enabled          = local.enable_scheduling
   schedule_expression = "cron(30 11 ? * Mon-Fri *)"
 }
 
 resource "aws_cloudwatch_event_rule" "lambda_stop" {
   name                = "${var.resource_prefix}lambda-stop-trigger"
   description         = "hits lambda for the stop function"
+  is_enabled          = local.enable_scheduling
   schedule_expression = "cron(0 19 ? * Mon-Fri *)"
 }
 

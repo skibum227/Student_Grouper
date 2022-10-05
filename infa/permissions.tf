@@ -18,7 +18,9 @@ resource "aws_iam_role" "task_resource_access" {
   assume_role_policy = data.aws_iam_policy_document.trust_service_ecs_tasks.json
 }
 
-# Below is all for lambda
+# Enables Lambda to update parameters in running services
+# The lambda function can affect all services in a cluster
+#   which is why the permissions are pretty open
 data "aws_iam_policy_document" "AWSLambdaTrustPolicy" {
   statement {
     actions = ["sts:AssumeRole"]

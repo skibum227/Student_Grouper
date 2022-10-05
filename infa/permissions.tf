@@ -13,7 +13,7 @@ data "aws_iam_policy_document" "trust_service_ecs_tasks" {
 
 resource "aws_iam_role" "task_resource_access" {
   for_each           = local.spec_map
-  name               = "${var.resource_prefix}-${each.key}-task-role"
+  name               = "${var.resource_prefix}${each.key}-task-role"
   description        = "Access resources from ECS runtime containers."
   assume_role_policy = data.aws_iam_policy_document.trust_service_ecs_tasks.json
 }
@@ -33,7 +33,7 @@ data "aws_iam_policy_document" "AWSLambdaTrustPolicy" {
 }
 
 resource "aws_iam_role" "lambda_role" {
-  name               = "${var.resource_prefix}-lambda-ecs-control-role"
+  name               = "${var.resource_prefix}lambda-ecs-control-role"
   assume_role_policy = data.aws_iam_policy_document.AWSLambdaTrustPolicy.json
   managed_policy_arns = [
     "arn:aws:iam::aws:policy/AmazonECS_FullAccess",

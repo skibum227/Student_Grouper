@@ -30,7 +30,7 @@ module "endpoints" {
       service_type    = "Gateway"
       route_table_ids = module.vpc.private_route_table_ids
       tags = {
-        Name = "${var.resource_prefix}-s3-vpc-endpoint"
+        Name = "${var.resource_prefix}s3-vpc-endpoint"
       }
     },
     ecs = {

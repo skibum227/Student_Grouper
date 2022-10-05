@@ -5,16 +5,16 @@
 #   and tasks during certain hours to save money
 resource "aws_cloudwatch_event_rule" "lambda_start" {
   name                = "${var.resource_prefix}lambda-start-trigger"
-  description         = "hits lambda for the start function"
+  description         = "Sends payload to lambda to start the ecs cluster"
   is_enabled          = local.enable_scheduling
-  schedule_expression = "cron(30 11 ? * Mon-Fri *)"
+  schedule_expression = local.start_time 
 }
 
 resource "aws_cloudwatch_event_rule" "lambda_stop" {
   name                = "${var.resource_prefix}lambda-stop-trigger"
-  description         = "hits lambda for the stop function"
+  description         = "Sends payload to lambda to stop the ecs cluster"
   is_enabled          = local.enable_scheduling
-  schedule_expression = "cron(0 19 ? * Mon-Fri *)"
+  schedule_expression = local.stop_time
 }
 
 resource "aws_cloudwatch_event_target" "lambda_start" {

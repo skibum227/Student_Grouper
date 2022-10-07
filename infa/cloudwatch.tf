@@ -7,7 +7,7 @@ resource "aws_cloudwatch_event_rule" "lambda_start" {
   name                = "${var.resource_prefix}lambda-start-trigger"
   description         = "Sends payload to lambda to start the ecs cluster"
   is_enabled          = local.enable_scheduling
-  schedule_expression = local.start_time 
+  schedule_expression = local.start_time
 }
 
 resource "aws_cloudwatch_event_rule" "lambda_stop" {

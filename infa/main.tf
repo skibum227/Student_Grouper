@@ -24,11 +24,11 @@ provider "aws" {
 
 # General Locals
 locals {
-  region         = "us-east-1"
-  container_port = 5050
+  region            = "us-east-1"
+  container_port    = 5050
   enable_scheduling = false
-  start_time =  "cron(30 11 ? * Mon-Fri *)"
-  stop_time  =  "cron(0 19 ? * Mon-Fri *)"
+  start_time        = "cron(30 11 ? * Mon-Fri *)"
+  stop_time         = "cron(0 19 ? * Mon-Fri *)"
 }
 
 # Definition for each task to be ran by ECS Fargate

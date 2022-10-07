@@ -2,6 +2,8 @@
 - Add scheduling to infa code
 - Add a DB
 - Add a ci/cd tool
+- `terraform plan --out ../../../plan`
+- `terraform plan apply ../../../plan`
 
 # Student Grouper
 #### Created by Skibum Woodworks Algorithm Development Division, 2021-08-09

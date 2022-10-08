@@ -64,14 +64,6 @@ module "endpoints" {
       tags = {
         Name = "${var.resource_prefix}ecr-dkr-vpc-endpoint"
       }
-    },
-    ecs_agent = {
-      service             = "ecs-agent"
-      private_dns_enabled = true
-      subnet_ids          = module.vpc.private_subnets
-      tags = {
-        Name = "${var.resource_prefix}ecs-agent-vpc-endpoint"
-      }
     }
   }
 }

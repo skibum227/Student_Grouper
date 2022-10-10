@@ -14,3 +14,11 @@ resource "aws_lambda_function" "lambda_ecs_control" {
   # This makes sure the lambda function is build after the role is ready
   depends_on = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]
 }
+
+resource "aws_lambda_permission" "allow_cloudwatch_to_run_lambda" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.lambda_ecs_control.function_name
+  principal     = "events.amazonaws.com"
+}
+

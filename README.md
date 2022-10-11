@@ -1,38 +1,24 @@
-# TODO
+#### TODO
 - Add a DB
 - Add a ci/cd tool
 
 # Student Grouper
-### Created by Skibum Woodworks Algorithm Development Division, 2021-08-09
+#### Created by Skibum Woodworks Algorithm Development Division, 2021-08-09
 #### (All working on AWS via Terraform 2022-06-28)
 
 ## Summary
 - This repository contains the code to groups students in desired numbers, handle leftovers, and then create a 
 nice visual for students.
 
-- The code is set up so that the grouper logic can be ran locally as well as in a container. Additionally this container can be pushed up to AWS and ran on ECS (the smallest provisioning can be used which costs approximately $0.15 a day). 
+- The code is depolyable on AWS using the terrafrom infastructure, local docker, or simly hosing the server natively. 
 
 ## Organization
 	
 - Main directory - contains all docker setup files and requirements
 
-- gunicorn_starter.sh - core starting scipt to bring up app with WSGI
+- app - core app orchestration logic and componensts
 
-- app/app.py - core app orchestration logic
-
-- app/templates/* - contains all of the html templates
-
-- app/runner.py - command line usage (for developement only)
-
-- app/initializer.py - works with commandline interface and only used in developement
-
-- app/grouper.py - contains the logic for creating the student groups
-
-- app/plotter.py - takes the output from the grouper and makes a nice visualization of the groups with plotly
-
-- app/student_ledger.xlsx - manually updated list of students in each class so they can be accessed (will become a db at some point)
-
-- infa/* - Terraformed AWS resources and modules to automatically host and run the app
+- infa - terrafromed AWS infastrucuture
 
 ## How to Use
 

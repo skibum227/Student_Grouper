@@ -10,6 +10,9 @@ FEATURES, ENHANCEMENTS, BUG FIXES, DOCS, BREAKING CHANGES, NOTES
 ```
 
 ## Unreleased
+### ENHANCEMENTS
+- Removed NAT Gateway to save money, replaced with endpoint (running)
+- Added scheduled cloudwatch events + lambda to start/stop cluster (running)
 
 ##v0.1.0 
 ### ENHANCEMENTS

@@ -50,7 +50,7 @@ resource "aws_ecs_task_definition" "this" {
       # https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_PortMapping.html
       portMappings = var.container_port != null ? [{ containerPort = var.container_port }] : []
       # Injects the override command if one exists
-      command      = var.command != null ? [var.command] : []
+      command = var.command != null ? [var.command] : []
     }
   ])
 }

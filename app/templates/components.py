@@ -99,7 +99,7 @@ def content_params_component(periods):
                 dbc.RadioItems(
                     id="group_size",
                     options=[ {"label": f"{x}" , "value": x} for x in range(2,11)],
-                    value=2,
+                    value=3,
                     inline=True,
                  ),
                 width={"size": 10, "offset": 0}
@@ -135,7 +135,7 @@ def content_params_component(periods):
                         {"label": "Yes", "value": 1},
                         {"label": "No", "value": 0},
                     ],
-                    value=1,
+                    value=0,
                 ),
         )], 
         id="parameters_page",

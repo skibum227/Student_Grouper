@@ -30,7 +30,7 @@ module "endpoints" {
       service_type    = "Gateway"
       route_table_ids = module.vpc.private_route_table_ids
       tags = {
-        Name = "${var.resource_prefix}-s3-vpc-endpoint"
+        Name = "${var.resource_prefix}s3-vpc-endpoint"
       }
     },
     ecs = {
@@ -63,14 +63,6 @@ module "endpoints" {
       subnet_ids          = module.vpc.private_subnets
       tags = {
         Name = "${var.resource_prefix}ecr-dkr-vpc-endpoint"
-      }
-    },
-    ecs_agent = {
-      service             = "ecs-agent"
-      private_dns_enabled = true
-      subnet_ids          = module.vpc.private_subnets
-      tags = {
-        Name = "${var.resource_prefix}ecs-agent-vpc-endpoint"
       }
     }
   }

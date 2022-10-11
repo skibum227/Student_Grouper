@@ -1,5 +1,4 @@
 #### TODO
-- Add scheduling to infa code
 - Add a DB
 - Add a ci/cd tool
 

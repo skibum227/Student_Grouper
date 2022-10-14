@@ -46,6 +46,12 @@ app.secret_key = secret
 server = app.server
 
 ###############
+# APP Constants
+###############
+
+class_names = {'0':'Period 1', '1':'Period 2', '2':'Period 3', '3':'Period 4', '4':'Period 5', '5':'Period 6'}
+
+###############
 # APP Layout
 ###############
 
@@ -53,13 +59,17 @@ df = pd.DataFrame()
 app.layout = html.Div(
     dbc.Row([
         dbc.Col([
-            html.Div(dcc.Input(
-                id='input-on-submit',
-                type='text',
-                placeholder='Enter Period Name',
-                autoFocus=True,
+            html.H3(
+                "Select Class",
+                className="my-2",
+                style={'margin': '10px', 'width': '100%', 'textAlign': 'center'}
+            ),
+            html.Hr(style={'margin': '10px', 'width': '100%'}),
+            dbc.Select(
+                id="input-on-submit",
+                options=[{"label": v, "value": k} for k,v in class_names.items()],
                 style={'margin': '10px', 'width': '100%'}
-            )),
+            ),
             dcc.Upload(
                 id='upload-data',
                 children=html.Div([
@@ -82,11 +92,11 @@ app.layout = html.Div(
                 style={'margin': '10px', 'width': '100%'},
                 n_clicks=0
             ),
-            html.Div(
-                id='container-button-basic',
-                children='Enter a value and press submit',
+            html.P(
+                id='update-confirm',
+                className="my-2",
+                style={'margin': '10px', 'width': '100%', 'textAlign': 'center'}
             ),
-            html.Br(),
         ], width={'size':2, 'offset': 1}),
         dbc.Col([
             html.Div(id='output-data-upload', style={'margin': '10px', 'width': '100%'}),
@@ -147,7 +157,7 @@ def build_roster_table(df):
 
 @app.callback(
     Output('output-data-upload', 'children'),
-    Output('container-button-basic', 'children'),
+    Output('update-confirm', 'children'),
     Input('upload-data', 'contents'),
     State('upload-data', 'filename'),
     Input('submit-val', 'n_clicks'),
@@ -162,8 +172,8 @@ def update_output(contents, filename,  n_clicks, value):
         roster_table = build_roster_table(roster_df)
 
         if ctx.triggered_id == 'submit-val' and value:
-            save_to_redis(df, value)
-            msg = f'{value} has been saved'
+            #save_to_redis(df, value)
+            msg = f'{class_names[value]} has been saved'
         else:
             msg = ''
 

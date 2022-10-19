@@ -34,6 +34,7 @@ import pandas as pd
 # Want to use this: Offcanvas and start with loading/deleting a whole class
 
 #https://dash-bootstrap-components.opensource.faculty.ai/docs/components/table/
+#https://dash.plotly.com/basic-callbacks#dash-app-with-chained-callbacks
 
 ################
 # APP DEFINITION
@@ -50,6 +51,15 @@ server = app.server
 ###############
 
 class_names = {'0':'Period 1', '1':'Period 2', '2':'Period 3', '3':'Period 4', '4':'Period 5', '5':'Period 6'}
+r = redis.StrictRedis(host='127.0.0.1',port='6379',db=0,charset="utf-8",decode_responses=True)
+
+def current_availible_classes():
+    r = redis.StrictRedis(host='127.0.0.1',port='6379',db=0,charset="utf-8",decode_responses=True)
+    sorted_keys = r.keys()
+    sorted_keys.sort()
+    return [{'value':x, 'label':class_names[x]} for x in sorted_keys]
+
+
 
 ###############
 # APP Layout
@@ -60,13 +70,13 @@ app.layout = html.Div(
     dbc.Row([
         dbc.Col([
             html.H3(
-                "Select Class",
+                "Upload Class",
                 className="my-2",
                 style={'margin': '10px', 'width': '100%', 'textAlign': 'center'}
             ),
             html.Hr(style={'margin': '10px', 'width': '100%'}),
             dbc.Select(
-                id="input-on-submit",
+                id="upload-a-class",
                 options=[{"label": v, "value": k} for k,v in class_names.items()],
                 style={'margin': '10px', 'width': '100%'}
             ),
@@ -87,22 +97,89 @@ app.layout = html.Div(
             ),
             dbc.Button(
                 'Submit Period Name and Roster',
-                id='submit-val',
+                id='submit-upload',
                 className="me-2",
                 style={'margin': '10px', 'width': '100%'},
                 n_clicks=0
             ),
             html.P(
-                id='update-confirm',
+                id='upload-confirm',
                 className="my-2",
                 style={'margin': '10px', 'width': '100%', 'textAlign': 'center'}
             ),
         ], width={'size':2, 'offset': 1}),
         dbc.Col([
-            html.Div(id='output-data-upload', style={'margin': '10px', 'width': '100%'}),
+            html.Div(id='data-to-upload', style={'margin': '10px', 'width': '100%'}),
+        ], width={'size':2, 'offset': 0}),
+        dbc.Col([
+            html.H3(
+                "Delete Class",
+                className="my-2",
+                style={'margin': '10px', 'width': '100%', 'textAlign': 'center'}
+            ),
+            html.Hr(style={'margin': '10px', 'width': '100%'}),
+            dbc.Select(
+                id="select-a-class",
+                options=current_availible_classes(),
+                style={'margin': '10px', 'width': '100%'}
+            ),
+            dbc.Button(
+                'Delete Class',
+                id='delete-class',
+                color='danger',
+                className="me-1",
+                style={'margin': '10px', 'width': '100%'},
+                n_clicks=0
+            ),
+            html.P(
+                id='delete-confirm',
+                className="my-2",
+                style={'margin': '10px', 'width': '100%', 'textAlign': 'center'}
+            ),
+        ], width={'size':2, 'offset': 0}),
+        dbc.Col([
+            html.H3(
+                "Select Class",
+                className="my-2",
+                style={'margin': '10px', 'width': '100%', 'textAlign': 'center'}
+            ),
+            html.Hr(style={'margin': '10px', 'width': '100%'}),
+            dbc.Select(
+                id="adjust-a-class",
+                options=current_availible_classes(),
+                style={'margin': '10px', 'width': '100%'}
+            ),
+            dbc.RadioItems(
+                id='adjsut-select',
+                options=[
+                    {"label": "Add Student", "value": 1},
+                    {"label": "Remove Student", "value": 2},
+                    {"label": "Delete Class", "value": 3},
+                ],
+                value=1,
+                style={'margin': '10px', 'width': '100%'}
+            ),
+            dbc.Select(
+                id="select-a-student",
+                name='testing',
+                options=[{'label':'a', 'value':'1'}, {'label':'b', 'value':'2'}],
+                disabled=True,
+                style={'margin': '10px', 'width': '100%'}
+            ),
+            dbc.Button(
+                'Delete Class',
+                id='delete-class-2',
+                color='danger',
+                className="me-1",
+                style={'margin': '10px', 'width': '100%'},
+                n_clicks=0,
+                disabled=True
+            ),
         ], width={'size':2, 'offset': 0}),
     ])
 )
+
+
 
 def parse_contents(contents, filename):
     content_type, content_string = contents.split(',')
@@ -125,19 +202,10 @@ def parse_contents(contents, filename):
     return df
 
 def save_to_redis(df, name):
-    # Redis test
-    data = json.dumps(df.iloc[:,0].tolist())
-
-    r = redis.StrictRedis(
-            host='127.0.0.1',
-            port='6379',
-            db=0,
-            charset="utf-8",
-            decode_responses=True
-        )
+    data = json.dumps(df.student_names.tolist())
     r[name] = data
-    # Get back from redis
-    print(r.get(name))
+#    print(r.get(name))
+    # print(r.keys())
   
 def build_roster_table(df):
     # Create the header for the table
@@ -156,12 +224,12 @@ def build_roster_table(df):
     return table
 
 @app.callback(
-    Output('output-data-upload', 'children'),
-    Output('update-confirm', 'children'),
+    Output('data-to-upload', 'children'),
+    Output('upload-confirm', 'children'),
     Input('upload-data', 'contents'),
     State('upload-data', 'filename'),
-    Input('submit-val', 'n_clicks'),
-    State('input-on-submit', 'value')
+    Input('submit-upload', 'n_clicks'),
+    State('upload-a-class', 'value')
 )
 def update_output(contents, filename,  n_clicks, value):
     # This enables the button and roster to work together
@@ -171,8 +239,8 @@ def update_output(contents, filename,  n_clicks, value):
 
         roster_table = build_roster_table(roster_df)
 
-        if ctx.triggered_id == 'submit-val' and value:
-            #save_to_redis(df, value)
+        if ctx.triggered_id == 'submit-upload' and value:
+            save_to_redis(roster_df, value)
             msg = f'{class_names[value]} has been saved'
         else:
             msg = ''
@@ -181,6 +249,24 @@ def update_output(contents, filename,  n_clicks, value):
 
     return None, None
 
+
+@app.callback(
+    Output('select-a-class', 'options'),
+    Output('delete-confirm', 'children'),
+    Input('delete-class', 'n_clicks'),
+    State('select-a-class', 'value')
+)
+def get_loaded_classes(n_clicks, value):
+    # needs a redis connection
+    if ctx.triggered_id == 'delete-class' and value:
+        r.delete(value)
+        msg = f'{class_names[value]} has been deleted!'
+    else:
+        msg = ''
+        
+    sorted_keys = r.keys()
+    sorted_keys.sort()
+    return [{'value':x, 'label':class_names[x]} for x in sorted_keys], msg
 
 
 if __name__ == "__main__":

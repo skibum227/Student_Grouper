@@ -59,7 +59,8 @@ def current_availible_classes():
     sorted_keys.sort()
     return [{'value':x, 'label':class_names[x]} for x in sorted_keys]
 
-
+on_style =  {'margin': '10px', 'width': '100%', 'display':'block'}
+off_style = {'margin': '10px', 'width': '100%', 'display':'block'}
 
 ###############
 # APP Layout
@@ -113,39 +114,13 @@ app.layout = html.Div(
         ], width={'size':2, 'offset': 0}),
         dbc.Col([
             html.H3(
-                "Delete Class",
-                className="my-2",
-                style={'margin': '10px', 'width': '100%', 'textAlign': 'center'}
-            ),
-            html.Hr(style={'margin': '10px', 'width': '100%'}),
-            dbc.Select(
-                id="select-a-class",
-                options=current_availible_classes(),
-                style={'margin': '10px', 'width': '100%'}
-            ),
-            dbc.Button(
-                'Delete Class',
-                id='delete-class',
-                color='danger',
-                className="me-1",
-                style={'margin': '10px', 'width': '100%'},
-                n_clicks=0
-            ),
-            html.P(
-                id='delete-confirm',
-                className="my-2",
-                style={'margin': '10px', 'width': '100%', 'textAlign': 'center'}
-            ),
-        ], width={'size':2, 'offset': 0}),
-        dbc.Col([
-            html.H3(
                 "Select Class",
                 className="my-2",
                 style={'margin': '10px', 'width': '100%', 'textAlign': 'center'}
             ),
             html.Hr(style={'margin': '10px', 'width': '100%'}),
             dbc.Select(
-                id="adjust-a-class",
+                id="select-a-class",
                 options=current_availible_classes(),
                 style={'margin': '10px', 'width': '100%'}
             ),
@@ -157,23 +132,46 @@ app.layout = html.Div(
                     {"label": "Delete Class", "value": 3},
                 ],
                 value=1,
-                style={'margin': '10px', 'width': '100%'}
+                style=on_style,
+            ),
+            dbc.Input(
+                placeholder="Enter New Student's Name...", 
+                type="text",
+                style=off_style,
+            ),
+            dbc.Button(
+                'Add Student',
+                id='add-student',
+                color='success',
+                className="me-1",
+                style=off_style,
+                n_clicks=0
             ),
             dbc.Select(
                 id="select-a-student",
-                name='testing',
-                options=[{'label':'a', 'value':'1'}, {'label':'b', 'value':'2'}],
-                disabled=True,
-                style={'margin': '10px', 'width': '100%'}
+                options=[],
+                style=off_style,
+            ),
+            dbc.Button(
+                'Delete Student',
+                id='delete-student',
+                color='danger',
+                className="me-1",
+                style=off_style,
+                n_clicks=0
             ),
             dbc.Button(
                 'Delete Class',
-                id='delete-class-2',
+                id='delete-class',
                 color='danger',
                 className="me-1",
-                style={'margin': '10px', 'width': '100%'},
-                n_clicks=0,
-                disabled=True
+                style=off_style,
+                n_clicks=0
+            ),
+            html.P(
+                id='delete-confirm',
+                className="my-2",
+                style={'margin': '10px', 'width': '100%', 'textAlign': 'center'}
             ),
         ], width={'size':2, 'offset': 0}),
     ])
@@ -263,10 +261,20 @@ def get_loaded_classes(n_clicks, value):
         msg = f'{class_names[value]} has been deleted!'
     else:
         msg = ''
-        
+
     sorted_keys = r.keys()
     sorted_keys.sort()
     return [{'value':x, 'label':class_names[x]} for x in sorted_keys], msg
+
+@app.callback(
+    Output('select-a-student', 'options'),
+    Input('select-a-class', 'value')
+)
+def get_student_names(class_index):
+    if class_index:
+        roster = json.loads(r.get(class_index))
+        return [{"label": x, "value": f'{i}'} for i,x in enumerate(roster)]
+    return []
 
 
 if __name__ == "__main__":

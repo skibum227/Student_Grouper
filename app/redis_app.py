@@ -131,8 +131,12 @@ app.layout = html.Div(
                     {"label": "Remove Student", "value": 2},
                     {"label": "Delete Class", "value": 3},
                 ],
-                value=None,
+                value=1,
                 style=on_style,
+            ),
+            html.Br(),
+            html.Hr(
+                style={'margin': '10px', 'width': '100%'}
             ),
             dbc.Input(
                 id='student-name',
@@ -276,7 +280,6 @@ def get_student_names(class_index):
     Input('select-a-class', 'value')
 )
 def display_actions(action, class_name):
-    print(action)
     if action == 1:
         return on_style, on_style, off_style, off_style, off_style
     elif action == 2:
@@ -299,20 +302,25 @@ def display_actions(action, class_name):
 def make_changes(class_value, student_name, student_value, n_clicks_as, n_clicks_ds, n_clicks_dc):
 
     if ctx.triggered_id == 'add-student' and class_value is not None and student_name is not None:
-        # print(ctx.triggered_id)
-        # print(student_name)
+        # Get the roster
         roster = json.loads(r.get(class_value))
+        # Add the name
         roster.append(student_name)
-        print(json.dumps(roster))
-        # NEED TO SEND ROSTER BACK!
+        # Save it!
+        r[class_value] = json.dumps(roster)
 
         msg = f'{student_name} has been added to {class_names[class_value]}!'
 
     elif ctx.triggered_id == 'delete-student' and class_value is not None and student_value is not None:
-        # print(class_value)
-        # print(student_value)
+        # Get the roster
         roster = json.loads(r.get(class_value))
-        msg = f'{roster[int(student_value)]} has been removed from {class_names[class_value]}!'
+        # Remove the name
+        name = roster[int(student_value)]
+        roster.pop(int(student_value))
+        # Save it!
+        r[class_value] = json.dumps(roster)
+
+        msg = f'{name} has been removed from {class_names[class_value]}!'
 
     elif ctx.triggered_id == 'delete-class' and class_value is not None:
         r.delete(class_value)

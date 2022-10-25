@@ -60,7 +60,7 @@ def current_availible_classes():
     return [{'value':x, 'label':class_names[x]} for x in sorted_keys]
 
 on_style =  {'margin': '10px', 'width': '100%', 'display':'block'}
-off_style = {'margin': '10px', 'width': '100%', 'display':'block'}
+off_style = {'margin': '10px', 'width': '100%', 'display':'None'}
 
 ###############
 # APP Layout
@@ -125,16 +125,17 @@ app.layout = html.Div(
                 style={'margin': '10px', 'width': '100%'}
             ),
             dbc.RadioItems(
-                id='adjsut-select',
+                id='adjust-select',
                 options=[
                     {"label": "Add Student", "value": 1},
                     {"label": "Remove Student", "value": 2},
                     {"label": "Delete Class", "value": 3},
                 ],
-                value=1,
+                value=None,
                 style=on_style,
             ),
             dbc.Input(
+                id='student-name',
                 placeholder="Enter New Student's Name...", 
                 type="text",
                 style=off_style,
@@ -155,7 +156,7 @@ app.layout = html.Div(
             dbc.Button(
                 'Delete Student',
                 id='delete-student',
-                color='danger',
+                color='warning',
                 className="me-1",
                 style=off_style,
                 n_clicks=0
@@ -169,7 +170,7 @@ app.layout = html.Div(
                 n_clicks=0
             ),
             html.P(
-                id='delete-confirm',
+                id='action-confirm',
                 className="my-2",
                 style={'margin': '10px', 'width': '100%', 'textAlign': 'center'}
             ),
@@ -202,8 +203,6 @@ def parse_contents(contents, filename):
 def save_to_redis(df, name):
     data = json.dumps(df.student_names.tolist())
     r[name] = data
-#    print(r.get(name))
-    # print(r.keys())
   
 def build_roster_table(df):
     # Create the header for the table
@@ -231,7 +230,6 @@ def build_roster_table(df):
 )
 def update_output(contents, filename,  n_clicks, value):
     # This enables the button and roster to work together
-    #roster_df = pd.DataFrame()
     if contents is not None:
         roster_df = parse_contents(contents, filename)
 
@@ -250,21 +248,13 @@ def update_output(contents, filename,  n_clicks, value):
 
 @app.callback(
     Output('select-a-class', 'options'),
-    Output('delete-confirm', 'children'),
-    Input('delete-class', 'n_clicks'),
-    State('select-a-class', 'value')
+    Input('select-a-class', 'value')
 )
-def get_loaded_classes(n_clicks, value):
-    # needs a redis connection
-    if ctx.triggered_id == 'delete-class' and value:
-        r.delete(value)
-        msg = f'{class_names[value]} has been deleted!'
-    else:
-        msg = ''
+def get_loaded_classes(value):
 
     sorted_keys = r.keys()
     sorted_keys.sort()
-    return [{'value':x, 'label':class_names[x]} for x in sorted_keys], msg
+    return [{'value':x, 'label':class_names[x]} for x in sorted_keys]
 
 @app.callback(
     Output('select-a-student', 'options'),
@@ -276,6 +266,60 @@ def get_student_names(class_index):
         return [{"label": x, "value": f'{i}'} for i,x in enumerate(roster)]
     return []
 
+@app.callback(
+    Output('student-name', 'style'),
+    Output('add-student', 'style'),
+    Output('select-a-student', 'style'),
+    Output('delete-student', 'style'),
+    Output('delete-class', 'style'),
+    Input('adjust-select', 'value'),
+    Input('select-a-class', 'value')
+)
+def display_actions(action, class_name):
+    print(action)
+    if action == 1:
+        return on_style, on_style, off_style, off_style, off_style
+    elif action == 2:
+        return off_style, off_style, on_style, on_style, off_style
+    elif action == 3:
+        return off_style, off_style, off_style, off_style, on_style
+    else:
+        return off_style, off_style, off_style, off_style, off_style
+
+
+@app.callback(
+    Output('action-confirm', 'children'), 
+    Input('select-a-class', 'value'),
+    Input('student-name', 'value'),
+    Input('select-a-student', 'value'),
+    Input('add-student', 'n_clicks'),
+    Input('delete-student', 'n_clicks'),
+    Input('delete-class', 'n_clicks'),
+)
+def make_changes(class_value, student_name, student_value, n_clicks_as, n_clicks_ds, n_clicks_dc):
+
+    if ctx.triggered_id == 'add-student' and class_value is not None and student_name is not None:
+        # print(ctx.triggered_id)
+        # print(student_name)
+        roster = json.loads(r.get(class_value))
+        roster.append(student_name)
+        print(json.dumps(roster))
+        # NEED TO SEND ROSTER BACK!
+
+        msg = f'{student_name} has been added to {class_names[class_value]}!'
+
+    elif ctx.triggered_id == 'delete-student' and class_value is not None and student_value is not None:
+        # print(class_value)
+        # print(student_value)
+        roster = json.loads(r.get(class_value))
+        msg = f'{roster[int(student_value)]} has been removed from {class_names[class_value]}!'
+
+    elif ctx.triggered_id == 'delete-class' and class_value is not None:
+        r.delete(class_value)
+        msg = f'{class_names[class_value]} has been deleted!'
+    else:
+        msg = ''
+    return msg   
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5050, debug=True)

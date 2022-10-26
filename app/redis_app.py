@@ -69,119 +69,140 @@ off_style = {'margin': '10px', 'width': '100%', 'display':'None'}
 df = pd.DataFrame()
 app.layout = html.Div(
     dbc.Row([
-        dbc.Col([
-            html.H3(
-                "Upload Class",
-                className="my-2",
-                style={'margin': '10px', 'width': '100%', 'textAlign': 'center'}
-            ),
-            html.Hr(style={'margin': '10px', 'width': '100%'}),
-            dbc.Select(
-                id="upload-a-class",
-                options=[{"label": v, "value": k} for k,v in class_names.items()],
-                style={'margin': '10px', 'width': '100%'}
-            ),
-            dcc.Upload(
-                id='upload-data',
-                children=html.Div([
-                    dbc.Button(
-                        "Drag and Drop or Select Files",
-                        outline=True,
-                        color='primary',
-                        style={'margin': '10px', 'width': '100%'}
-                    )
-                ]),
-            ),
-            html.Br(),
-            html.Hr(
-                style={'margin': '10px', 'width': '100%'}
-            ),
-            dbc.Button(
-                'Submit Period Name and Roster',
-                id='submit-upload',
-                className="me-2",
-                style={'margin': '10px', 'width': '100%'},
-                n_clicks=0
-            ),
-            html.P(
-                id='upload-confirm',
-                className="my-2",
-                style={'margin': '10px', 'width': '100%', 'textAlign': 'center'}
-            ),
-        ], width={'size':2, 'offset': 1}),
-        dbc.Col([
-            html.Div(id='data-to-upload', style={'margin': '10px', 'width': '100%'}),
-        ], width={'size':2, 'offset': 0}),
-        dbc.Col([
-            html.H3(
-                "Select Class",
-                className="my-2",
-                style={'margin': '10px', 'width': '100%', 'textAlign': 'center'}
-            ),
-            html.Hr(style={'margin': '10px', 'width': '100%'}),
-            dbc.Select(
-                id="select-a-class",
-                options=current_availible_classes(),
-                style={'margin': '10px', 'width': '100%'}
-            ),
-            dbc.RadioItems(
-                id='adjust-select',
-                options=[
-                    {"label": "Add Student", "value": 1},
-                    {"label": "Remove Student", "value": 2},
-                    {"label": "Delete Class", "value": 3},
-                ],
-                value=1,
-                style=on_style,
-            ),
-            html.Br(),
-            html.Hr(
-                style={'margin': '10px', 'width': '100%'}
-            ),
-            dbc.Input(
-                id='student-name',
-                placeholder="Enter New Student's Name...", 
-                type="text",
-                style=off_style,
-            ),
-            dbc.Button(
-                'Add Student',
-                id='add-student',
-                color='success',
-                className="me-1",
-                style=off_style,
-                n_clicks=0
-            ),
-            dbc.Select(
-                id="select-a-student",
-                options=[],
-                style=off_style,
-            ),
-            dbc.Button(
-                'Delete Student',
-                id='delete-student',
-                color='warning',
-                className="me-1",
-                style=off_style,
-                n_clicks=0
-            ),
-            dbc.Button(
-                'Delete Class',
-                id='delete-class',
-                color='danger',
-                className="me-1",
-                style=off_style,
-                n_clicks=0
-            ),
-            html.P(
-                id='action-confirm',
-                className="my-2",
-                style={'margin': '10px', 'width': '100%', 'textAlign': 'center'}
-            ),
-        ], width={'size':2, 'offset': 0}),
+        dbc.Button("Open Upload", id="open-offcanvas-upload", n_clicks=0),
+        dbc.Button("Open Adjust", id="open-offcanvas-adjust", n_clicks=0),
+        dbc.Offcanvas([
+            dbc.Col([
+                html.H3(
+                    "Upload Class",
+                    className="my-2",
+                    style={'margin': '10px', 'width': '100%', 'textAlign': 'center'}
+                ),
+                html.Hr(style={'margin': '10px', 'width': '100%'}),
+                dbc.Select(
+                    id="upload-a-class",
+                    options=[{"label": v, "value": k} for k,v in class_names.items()],
+                    style={'margin': '10px', 'width': '100%'}
+                ),
+                dcc.Upload(
+                    id='upload-data',
+                    children=html.Div([
+                        dbc.Button(
+                            "Drag and Drop or Select Files",
+                            outline=True,
+                            color='primary',
+                            style={'margin': '10px', 'width': '100%'}
+                        )
+                    ]),
+                ),
+                html.Br(),
+                html.Hr(
+                    style={'margin': '10px', 'width': '100%'}
+                ),
+                dbc.Button(
+                    'Submit Period Name and Roster',
+                    id='submit-upload',
+                    className="me-2",
+                    style={'margin': '10px', 'width': '100%'},
+                    n_clicks=0
+                ),
+                html.P(
+                    id='upload-confirm',
+                    className="my-2",
+                    style={'margin': '10px', 'width': '100%', 'textAlign': 'center'}
+                ),
+            ]), #, width={'size':2, 'offset': 1}),
+            dbc.Col([
+                html.Div(id='data-to-upload', style={'margin': '10px', 'width': '100%'}),
+            ]),#, width={'size':2, 'offset': 0}),
+        ], id="offcanvas-upload", title="Title", is_open=False, placement='end'),
+        dbc.Offcanvas([
+            dbc.Col([
+                html.H3(
+                    "Select Class",
+                    className="my-2",
+                    style={'margin': '10px', 'width': '100%', 'textAlign': 'center'}
+                ),
+                html.Hr(style={'margin': '10px', 'width': '100%'}),
+                dbc.Select(
+                    id="select-a-class",
+                    options=current_availible_classes(),
+                    style={'margin': '10px', 'width': '100%'}
+                ),
+                dbc.RadioItems(
+                    id='adjust-select',
+                    options=[
+                        {"label": "Add Student", "value": 1},
+                        {"label": "Remove Student", "value": 2},
+                        {"label": "Delete Class", "value": 3},
+                    ],
+                    value=1,
+                    style=on_style,
+                ),
+                html.Br(),
+                html.Hr(
+                    style={'margin': '10px', 'width': '100%'}
+                ),
+                dbc.Input(
+                    id='student-name',
+                    placeholder="Enter New Student's Name...", 
+                    type="text",
+                    style=off_style,
+                ),
+                dbc.Button(
+                    'Add Student',
+                    id='add-student',
+                    color='success',
+                    className="me-1",
+                    style=off_style,
+                    n_clicks=0
+                ),
+                dbc.Select(
+                    id="select-a-student",
+                    options=[],
+                    style=off_style,
+                ),
+                dbc.Button(
+                    'Delete Student',
+                    id='delete-student',
+                    color='warning',
+                    className="me-1",
+                    style=off_style,
+                    n_clicks=0
+                ),
+                dbc.Button(
+                    'Delete Class',
+                    id='delete-class',
+                    color='danger',
+                    className="me-1",
+                    style=off_style,
+                    n_clicks=0
+                ),
+                html.P(
+                    id='action-confirm',
+                    className="my-2",
+                    style={'margin': '10px', 'width': '100%', 'textAlign': 'center'}
+                ),
+            ]),#, width={'size':2, 'offset': 0}),
+        ], id="offcanvas-adjust", title="Title", is_open=False, placement='end'),
     ])
 )
 
+@app.callback(
+    Output("offcanvas-upload", "is_open"),
+    Output("offcanvas-adjust", "is_open"),
+    Input("open-offcanvas-upload", "n_clicks"),
+    Input("open-offcanvas-adjust", "n_clicks"),
+    [State("offcanvas-upload", "is_open"),
+     State("offcanvas-adjust", "is_open")],
+)
+def toggle_offcanvas(n1, n2, is_open_upload, is_open_adjust):
+    if ctx.triggered_id == 'open-offcanvas-upload':
+        return not is_open_upload, is_open_adjust
+    elif ctx.triggered_id == 'open-offcanvas-adjust':
+        return is_open_upload, not is_open_adjust
+    else:
+        return is_open_upload, is_open_adjust
 
 
 def parse_contents(contents, filename):
@@ -204,10 +225,12 @@ def parse_contents(contents, filename):
         ])
     return df
 
+
 def save_to_redis(df, name):
     data = json.dumps(df.student_names.tolist())
     r[name] = data
   
+
 def build_roster_table(df):
     # Create the header for the table
     table_header = [html.Thead(html.Tr([html.Th("Class Roster")]))]
@@ -223,6 +246,7 @@ def build_roster_table(df):
         striped=True
     )
     return table
+
 
 @app.callback(
     Output('data-to-upload', 'children'),
@@ -260,6 +284,7 @@ def get_loaded_classes(value):
     sorted_keys.sort()
     return [{'value':x, 'label':class_names[x]} for x in sorted_keys]
 
+
 @app.callback(
     Output('select-a-student', 'options'),
     Input('select-a-class', 'value')
@@ -269,6 +294,7 @@ def get_student_names(class_index):
         roster = json.loads(r.get(class_index))
         return [{"label": x, "value": f'{i}'} for i,x in enumerate(roster)]
     return []
+
 
 @app.callback(
     Output('student-name', 'style'),
@@ -328,6 +354,7 @@ def make_changes(class_value, student_name, student_value, n_clicks_as, n_clicks
     else:
         msg = ''
     return msg   
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5050, debug=True)

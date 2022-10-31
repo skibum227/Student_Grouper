@@ -65,7 +65,7 @@ def parse_contents(contents, filename):
         ])
     return df
 
-def save_to_database(df, name):
+def save_df_to_database(df, name):
     # Takes input value and saves to the database with key
     data = json.dumps(df.student_names.tolist())
     database[name] = data
@@ -73,7 +73,7 @@ def save_to_database(df, name):
 def build_roster_table(df):
     # Creates the output table for the uploaded class
     table_header = [html.Thead(html.Tr([html.Th("Class Roster")]))]
-    table_body = [html.Tbody([html.Tr([html.Td(x)]) for x in df.student_names.to_list()])]
+    table_body = [html.Tbody([html.Tr([html.Td(x)]) for x in df.iloc[:,0].to_list()])]
     table = dbc.Table(
         table_header + table_body,
         bordered=True, dark=True, hover=True, responsive=True, striped=True,
@@ -86,9 +86,15 @@ def build_roster_table(df):
 
 df = pd.DataFrame()
 app.layout = html.Div([
-    dbc.Button("Open Upload", id="offcanvas-upload-btn", n_clicks=0, style={'margin': '10px'}),
-    dbc.Button("Open Adjust", id="offcanvas-adjust-btn", n_clicks=0, style={'margin': '10px'}),
-    dbc.Button("Download Roster", id='download_btn', href="data_file.txt", color="primary", style={'margin': '10px'}),
+    dbc.Row([dbc.Col([
+        dbc.Button("Upload a Roster", id="offcanvas-upload-btn", n_clicks=0, style={'margin': '10px', 'size':'3'})
+    ], width=2)], justify='end'),
+    dbc.Row([dbc.Col([
+        dbc.Button("Adjust a Roster", id="offcanvas-adjust-btn", n_clicks=0, style={'margin': '10px', 'size':'3'}),
+    ], width=2)], justify='end'),
+    dbc.Row([dbc.Col([
+        dbc.Button("Download Roster", id='download_btn', href="data_file.txt", color="primary", style={'margin': '10px', 'size':'4'}),
+    ], width=2)], justify='end'),
     dcc.Download(id="download"), # this just enables the download to occur, nothing is displayed
     dbc.Offcanvas([
         html.H3(
@@ -206,9 +212,13 @@ app.layout = html.Div([
     Input("download_btn", "n_clicks")
 )
 def generate_csv(n_nlicks):
-    df = pd.DataFrame()
-    if ctx.triggered_id == 'dwnld_btn':
-        return dcc.send_data_frame(df.to_csv, filename="full_roster.csv")
+    if ctx.triggered_id == 'download_btn':
+        roster_dict = {}
+        for x in database.keys():
+            roster = json.loads(database.get(x))
+            roster_dict[f'{all_class_names[x]}'] = roster
+        roster_df = pd.DataFrame.from_dict(roster_dict, orient='index').transpose()
+        return dcc.send_data_frame(roster_df.to_csv, filename="full_roster.csv")
 
 # Open/Close the offcanvas objects
 @app.callback(
@@ -244,7 +254,7 @@ def update_output(contents, filename,  n_clicks, value):
         roster_table = build_roster_table(roster_df)
 
         if ctx.triggered_id == 'submit-upload' and value:
-            save_to_database(roster_df, value)
+            save_df_to_database(roster_df, value)
             msg = f'{all_class_names[value]} has been saved'
         else:
             msg = ''

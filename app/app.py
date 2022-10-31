@@ -33,9 +33,9 @@ stu_dict = pd.read_excel("student_ledger.xlsx", sheet_name=None)
 periods = list(stu_dict.keys())
 prelim_student_roster = list(stu_dict[periods[0]].student_names.values)
 
-######################
+########################
 # HEALTH CHECK ENDPOINTS
-######################
+########################
 
 health = HealthCheck()
 envdump = EnvironmentDump()

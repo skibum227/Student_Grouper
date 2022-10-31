@@ -7,12 +7,12 @@ from plotter import Plotter
 import pandas as pd
 
 import dash
-import dash_bootstrap_components as dbc
+import dash_bootstrap_core_components as dbc
 import dash_daq as daq
 from dash import Input, Output, dcc, html
 
 import templates.styles as styles
-import templates.components as components
+import templates.core_components as core_components
 
 ################
 # APP DEFINITION
@@ -56,21 +56,21 @@ server.add_url_rule("/environment", "environment", view_func=lambda: envdump.run
 
 
 ################
-# APP COMPONENTS
+# APP core_components
 ################
 app.title = 'The Student Grouper'
 
 # Build the sidebar 
-sidebar = components.sidebar_component(title, subtitle)
+sidebar = core_components.sidebar_component(title, subtitle)
 
 # Build the params content
-content_params = components.content_params_component(periods)
+content_params = core_components.content_params_component(periods)
 
 # Build the roster content
-content_roster = components.content_roster_component(prelim_student_roster)
+content_roster = core_components.content_roster_component(prelim_student_roster)
 
 # Build the table content
-content_table = components.content_table_component()
+content_table = core_components.content_table_component()
 
 
 ###############
@@ -103,7 +103,7 @@ def render_page_content(pathname, period_selection, group_size, distribute_lefto
 
     if pathname in ["/parameters", "/"]: # Left the old one on purpose
         return (
-                    components.roster_builder(student_names), \
+                    core_components.roster_builder(student_names), \
                     None, \
                     styles.CONTENT_STYLE_ON, \
                     styles.CONTENT_STYLE_OFF, \
@@ -132,7 +132,7 @@ def render_page_content(pathname, period_selection, group_size, distribute_lefto
 
         if pathname == "/roster":
             return (
-                        components.roster_builder(df.student_names.to_list()), \
+                        core_components.roster_builder(df.student_names.to_list()), \
                         None, \
                         styles.CONTENT_STYLE_OFF, \
                         styles.CONTENT_STYLE_ON, \
@@ -157,7 +157,7 @@ def render_page_content(pathname, period_selection, group_size, distribute_lefto
             fig = Plotter(params, df_gps).plot_groups()
 
             return (
-                        components.roster_builder(df.student_names.to_list()), \
+                        core_components.roster_builder(df.student_names.to_list()), \
                         dcc.Graph(figure=fig), \
                         styles.CONTENT_STYLE_OFF, \
                         styles.CONTENT_STYLE_OFF, \

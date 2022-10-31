@@ -24,3 +24,17 @@ CONTENT_STYLE_OFF= {
     "padding": "2rem 0rem",
     'display': 'none',
 }
+
+# Roster Adjust - on
+OFFCANVAS_ON_STYLE = {
+    'margin': '10px',
+    'width': '95%',
+    'display':'block'
+}
+
+# Roster Adjust - off
+OFFCANVAS_OFF_STYLE = {
+    'margin': '10px',
+    'width': '95%',
+    'display':'None'
+}

@@ -18,6 +18,10 @@ import pandas as pd
 import redis
 import secrets
 
+# Specific for app
+import templates.styles as styles
+import templates.roster_components as roster_components
+
 ################
 # APP DEFINITION
 ################

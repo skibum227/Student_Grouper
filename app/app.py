@@ -1,25 +1,25 @@
-from flask import Flask, request, render_template, session
-from healthcheck import HealthCheck, EnvironmentDump
 
-import secrets
+
+# My libraries
 from grouper import Grouper
 from plotter import Plotter
-import pandas as pd
+import templates.styles as styles
+import templates.core_components as core_components
+import templates.roster_components as roster_components
 
+# All dash libraries
 import dash
 import dash_bootstrap_components as dbc
 import dash_daq as daq
 from dash import (Input,
-                 Output,
-                 State,
-                 dcc,
-                 html,
-                 ctx,
-                 dash_table)
+                  Output,
+                  State,
+                  dcc,
+                  html,
+                  ctx)
     
-import templates.styles as styles
-import templates.core_components as core_components
-import templates.roster_components as roster_components
+# Easy healthcheck...
+from healthcheck import HealthCheck, EnvironmentDump
 
 # All other imports
 import base64
@@ -49,6 +49,13 @@ stu_dict = pd.read_excel("student_ledger.xlsx", sheet_name=None)
 periods = list(stu_dict.keys())
 prelim_student_roster = list(stu_dict[periods[0]].student_names.values)
 
+# This is for the roster adjustments...
+# All possible classes at PV
+all_class_names = {'0':'Period 1', '1':'Period 2', '2':'Period 3', '3':'Period 4', '4':'Period 5', '5':'Period 6'}
+# Connection to db for read/write
+database = redis.StrictRedis(host='127.0.0.1',port='6379',db=0,charset="utf-8",decode_responses=True)
+
+
 ########################
 # HEALTH CHECK ENDPOINTS
 ########################
@@ -69,11 +76,6 @@ envdump.add_section("application", application_data)
 # Add a flask route to expose information
 server.add_url_rule("/healthcheck", "healthcheck", view_func=lambda: health.run())
 server.add_url_rule("/environment", "environment", view_func=lambda: envdump.run())
-
-# All possible classes at PV
-all_class_names = {'0':'Period 1', '1':'Period 2', '2':'Period 3', '3':'Period 4', '4':'Period 5', '5':'Period 6'}
-# Connection to db for read/write
-database = redis.StrictRedis(host='127.0.0.1',port='6379',db=0,charset="utf-8",decode_responses=True)
 
 
 ################
@@ -101,10 +103,7 @@ roster_tools = roster_components.offcanvas_control(database, all_class_names)
 ###############
 
 # This puts the whole damn thing together
-#app.layout = html.Div([dcc.Location(id="ip"), sidebar, content_params, content_roster, content_table]) 
-# app.layout = html.Div([dcc.Location(id="ip"), sidebar, content_params, roster_tools, content_roster, content_table]) 
-app.layout = html.Div([dcc.Location(id="ip"), sidebar, content_params, content_roster, content_table, roster_tools]) 
-
+app.layout = html.Div([dcc.Location(id="ip"), sidebar, roster_tools, content_params, content_roster, content_table]) 
 
 @app.callback(
      Output(component_id="student_roster", component_property="children"),
@@ -190,14 +189,6 @@ def render_page_content(pathname, period_selection, group_size, distribute_lefto
                         styles.CONTENT_STYLE_ON
                    )
 
-    # If the user tries to reach a different page, return a 404 message
-    return (
-        [
-            html.H1("404: Not found", className="text-danger"),
-            html.Hr(),
-            html.P(f"The pathname {pathname} was not recognised..."),
-        ]
-    )
     return (
         core_components.roster_builder(student_names), \
         None, \

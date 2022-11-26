@@ -50,10 +50,7 @@ def content_params_component(periods):
         dbc.Row(
             dbc.Col(
                 html.Div(
-                    [
-                        html.H3("Select Class Period", className="display-7"),
-                        # html.P("This will be the class roster that will be grouped..."),
-                    ],
+                    html.H3("Select Class Period", className="display-7"),
                 ),
                 width={"size": 10, "offset": 0},
                 style={"color":"#d3d3d3"}
@@ -79,16 +76,12 @@ def content_params_component(periods):
         dbc.Row(
             dbc.Col(
                 html.Hr(),
-                # width={"size": 8, "offset": 0}
             )
         ),
         dbc.Row(
             dbc.Col(
                 html.Div(
-                    [
-                        html.H3("Select Group Size", className="display-7"),
-                        # html.P("This value will be the number of students in each group..."),
-                    ],
+                    html.H3("Select Group Size", className="display-7"),
                 ),
                 width={"size": 10, "offset": 0},
                 style={"color":"#d3d3d3"}
@@ -109,16 +102,12 @@ def content_params_component(periods):
         dbc.Row(
             dbc.Col(
                 html.Hr(),
-                # width={"size": 8, "offset": 0}
             )
         ),
         dbc.Row(
             dbc.Col(
                 html.Div(
-                    [
-                        html.H3("Distribute Non-Complete Groups", className="display-7"),
-                        # html.P("This demarcates what to do if the roster isn't cleanly divisible by the group count..."),
-                    ],
+                    html.H3("Distribute Non-Complete Groups", className="display-7"),
                 ),
                 width={"size": 10, "offset": 0},
                 style={"color":"#d3d3d3"}
@@ -148,19 +137,14 @@ def content_roster_component(student_roster_list):
         dbc.Row(
             dbc.Col(
                 html.Div(
-                    [
-                        html.H3("Update Student Attendence", className="display-7"),
-                        # html.P("Students not present today will not be factored into the grouping algorithm..."),
-                    ],
+                    html.H3("Update Student Attendence", className="display-7"),
                 ),
-                width={"size": 12, "offset": 0},
                 style={"color":"#d3d3d3"},
             )
         ),
         dbc.Row(
             dbc.Col(
                 html.Hr(),
-                width={"size": 12, "offset": 0}
             )
         ),
         html.Br(),
@@ -178,11 +162,11 @@ def roster_builder(student_roster_list):
     roster = [dbc.Row([
                 dbc.Col(
                     daq.BooleanSwitch(id=f"{x}", color="#4682b4", on=True),
-                    width={"size": 8, "offset": 0, "align":"start"},
+                    width={"offset": 0, "align":"start"},
                 ),
                 dbc.Col(
                     html.P(f"{x}"),
-                    width={"size": 8, "offset": 0, "justify":"start"},
+                    width={"offset": 0, "justify":"start"},
                 )
             ]) for x in student_roster_list]
     return roster
@@ -194,20 +178,16 @@ def content_table_component():
                 html.Div(
                     [
                         html.H3("Student Groups Table", className="display-7"),
-                        # html.P("Come back to page to select another RANDOM order... "),
                     ],
                 ),
-                width={"size": 10, "offset": 0},
                 style={"color":"#d3d3d3"},
             )
         ),
         dbc.Row(
             dbc.Col(
                 html.Hr(),
-                width={"size": 12, "offset": 0}
             )
         ),
-        # html.Br(),
         html.Div(
             id="grouper_table"
         )],

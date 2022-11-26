@@ -72,14 +72,14 @@ def content_params_component(periods):
                     for i, x in enumerate(periods)],
                     value=periods[0],
                 ),
-                width={'size': 12, 'offset': 0}
+                width={'size': 10, 'offset': 0}
             ),
         ),
         html.Br(),
         dbc.Row(
             dbc.Col(
                 html.Hr(),
-                width={"size": 10, "offset": 0}
+                # width={"size": 8, "offset": 0}
             )
         ),
         dbc.Row(
@@ -109,7 +109,7 @@ def content_params_component(periods):
         dbc.Row(
             dbc.Col(
                 html.Hr(),
-                width={"size": 10, "offset": 0}
+                # width={"size": 8, "offset": 0}
             )
         ),
         dbc.Row(
@@ -153,14 +153,14 @@ def content_roster_component(student_roster_list):
                         # html.P("Students not present today will not be factored into the grouping algorithm..."),
                     ],
                 ),
-                width={"size": 10, "offset": 0},
+                width={"size": 12, "offset": 0},
                 style={"color":"#d3d3d3"},
             )
         ),
         dbc.Row(
             dbc.Col(
                 html.Hr(),
-                width={"size": 10, "offset": 0}
+                width={"size": 12, "offset": 0}
             )
         ),
         html.Br(),
@@ -178,11 +178,11 @@ def roster_builder(student_roster_list):
     roster = [dbc.Row([
                 dbc.Col(
                     daq.BooleanSwitch(id=f"{x}", color="#4682b4", on=True),
-                    width={"size": 4, "offset": 0, "align":"start"},
+                    width={"size": 8, "offset": 0, "align":"start"},
                 ),
                 dbc.Col(
                     html.P(f"{x}"),
-                    width={"size": 4, "offset": 0, "justify":"start"},
+                    width={"size": 8, "offset": 0, "justify":"start"},
                 )
             ]) for x in student_roster_list]
     return roster

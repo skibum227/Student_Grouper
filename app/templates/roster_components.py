@@ -18,7 +18,7 @@ import io
 import json
 import pandas as pd
 
-def current_availible_classes(database):
+def current_availible_classes(database, all_class_names):
     # Simply returns all possible classes for initialization of app
     sorted_keys = database.keys()
     sorted_keys.sort()
@@ -59,137 +59,129 @@ def build_roster_table(df):
     return table
 
 # This is only for the side bar
-def control_buttons_component():
-    control_buttons = html.Div([
-        dbc.Row([dbc.Col([
-            dbc.Button("Upload a Roster", id="offcanvas-upload-btn", n_clicks=0, style={'margin': '10px', 'size':'3'})
-        ], width=2)], justify='end'),
-        dbc.Row([dbc.Col([
-            dbc.Button("Adjust a Roster", id="offcanvas-adjust-btn", n_clicks=0, style={'margin': '10px', 'size':'3'}),
-        ], width=2)], justify='end'),
-        dbc.Row([dbc.Col([
-            dbc.Button("Download Roster", id='download_btn', href="data_file.txt", color="primary", style={'margin': '10px', 'size':'4'}),
-        ], width=2)], justify='end'),
-        dcc.Download(id="download"), # this just enables the download to occur, nothing is displayed
+def offcanvas_control(database, all_class_names):
+    offcanvas = html.Div([
+        #dbc.Col([
+            dbc.Row([dbc.Col([
+                dbc.Button("Upload a Roster", id="offcanvas-upload-btn", color='secondary', n_clicks=0, style={'margin': '10px', 'size':'3'})
+            ], width={'size':2})], justify='end'),
+            dbc.Row([dbc.Col([
+                dbc.Button("Adjust a Roster", id="offcanvas-adjust-btn", color='secondary', n_clicks=0, style={'margin': '10px', 'size':'3'}),
+            ], width={'size':2})], justify='end'),
+            dbc.Row([dbc.Col([
+                dbc.Button("Download Roster", id='download_btn', href="data_file.txt", color="secondary", style={'margin': '10px', 'size':'3'}),
+            ], width={'size':2})], justify='end'),
+            dcc.Download(id="download"), # this just enables the download to occur, nothing is displayed
+            dbc.Offcanvas([
+                html.H3(
+                    "Upload Class",
+                    className="my-2",
+                    style={'margin': '10px', 'width': '95%', 'textAlign': 'center'}
+                ),
+                html.Hr(style={'margin': '10px', 'width': '95%'}),
+                dbc.Select(
+                    id="upload-a-class",
+                    options=[{"label": v, "value": k} for k,v in all_class_names.items()],
+                    style={'margin': '10px', 'width': '95%'}
+                ),
+                dcc.Upload(
+                    id='upload-data',
+                    children=html.Div([
+                        dbc.Button(
+                            "Drag and Drop or Select Files",
+                            outline=True,
+                            color='primary',
+                            style={'margin': '10px', 'width': '95%'}
+                        )
+                    ]),
+                ),
+                html.Br(),
+                html.Hr(
+                    style={'margin': '10px', 'width': '95%'}
+                ),
+                dbc.Button(
+                    'Submit Period Name and Roster',
+                    id='submit-upload',
+                    className="me-2",
+                    style={'margin': '10px', 'width': '95%'},
+                    n_clicks=0
+                ),
+                html.P(
+                    id='upload-confirm',
+                    className="my-2",
+                    style={'margin': '10px', 'width': '95%', 'textAlign': 'center'}
+                ),
+                html.Div(id='data-to-upload', style={'margin': '10px', 'width': '100%'}),
+            ], id="offcanvas-upload", title="Roster Database", is_open=False, placement='end', backdrop=True),
+            dbc.Offcanvas([
+                html.H3(
+                    "Select Class",
+                    className="my-2",
+                    style={'margin': '10px', 'width': '95%', 'textAlign': 'center'}
+                ),
+                html.Hr(style={'margin': '10px', 'width': '95%'}),
+                dbc.Select(
+                    id="select-a-class",
+                    options=current_availible_classes(database, all_class_names),
+                    style={'margin': '10px', 'width': '95%'}
+                ),
+                dbc.RadioItems(
+                    id='adjust-select',
+                    options=[
+                        {"label": "Add Student", "value": 1},
+                        {"label": "Remove Student", "value": 2},
+                        {"label": "Delete Class", "value": 3},
+                    ],
+                    value=1,
+                    style=styles.OFFCANVAS_ON_STYLE,
+                ),
+                html.Br(),
+                html.Hr(
+                    style={'margin': '10px', 'width': '95%'}
+                ),
+                dbc.Input(
+                    id='student-name',
+                    placeholder="Enter New Student's Name...",
+                    type="text",
+                    style=styles.OFFCANVAS_OFF_STYLE,
+                ),
+                dbc.Button(
+                    'Add Student',
+                    id='add-student',
+                    color='success',
+                    className="me-1",
+                    style=styles.OFFCANVAS_OFF_STYLE,
+                    n_clicks=0
+                ),
+                dbc.Select(
+                    id="select-a-student",
+                    options=[],
+                    style=styles.OFFCANVAS_OFF_STYLE,
+                ),
+                dbc.Button(
+                    'Delete Student',
+                    id='delete-student',
+                    color='warning',
+                    className="me-1",
+                    style=styles.OFFCANVAS_OFF_STYLE,
+                    n_clicks=0
+                ),
+                dbc.Button(
+                    'Delete Class',
+                    id='delete-class',
+                    color='danger',
+                    className="me-1",
+                    style=styles.OFFCANVAS_OFF_STYLE,
+                    n_clicks=0
+                ),
+                html.P(
+                    id='action-confirm',
+                    className="my-2",
+                    style={'margin': '10px', 'width': '95%', 'textAlign': 'center'}
+                ),
+            ], id="offcanvas-adjust", title="Roster Database", is_open=False, placement='end', backdrop=True),
+        #])
     ])
-    return control_buttons
-
-def upload_class_component():
-    upload_class = html.Div([
-        dbc.Offcanvas([
-            html.H3(
-                "Upload Class",
-                className="my-2",
-                style={'margin': '10px', 'width': '95%', 'textAlign': 'center'}
-            ),
-            html.Hr(style={'margin': '10px', 'width': '95%'}),
-            dbc.Select(
-                id="upload-a-class",
-                options=[{"label": v, "value": k} for k,v in all_class_names.items()],
-                style={'margin': '10px', 'width': '95%'}
-            ),
-            dcc.Upload(
-                id='upload-data',
-                children=html.Div([
-                    dbc.Button(
-                        "Drag and Drop or Select Files",
-                        outline=True,
-                        color='primary',
-                        style={'margin': '10px', 'width': '95%'}
-                    )
-                ]),
-            ),
-            html.Br(),
-            html.Hr(
-                style={'margin': '10px', 'width': '95%'}
-            ),
-            dbc.Button(
-                'Submit Period Name and Roster',
-                id='submit-upload',
-                className="me-2",
-                style={'margin': '10px', 'width': '95%'},
-                n_clicks=0
-            ),
-            html.P(
-                id='upload-confirm',
-                className="my-2",
-                style={'margin': '10px', 'width': '95%', 'textAlign': 'center'}
-            ),
-            html.Div(id='data-to-upload', style={'margin': '10px', 'width': '100%'}),
-        ], id="offcanvas-upload", title="Roster Database", is_open=False, placement='end', backdrop=True),
-    ])
-    return upload_class
-
-def adjust_class_component():
-    adjust_class = html.Div([
-        dbc.Offcanvas([
-            html.H3(
-                "Select Class",
-                className="my-2",
-                style={'margin': '10px', 'width': '95%', 'textAlign': 'center'}
-            ),
-            html.Hr(style={'margin': '10px', 'width': '95%'}),
-            dbc.Select(
-                id="select-a-class",
-                options=current_availible_classes(),
-                style={'margin': '10px', 'width': '95%'}
-            ),
-            dbc.RadioItems(
-                id='adjust-select',
-                options=[
-                    {"label": "Add Student", "value": 1},
-                    {"label": "Remove Student", "value": 2},
-                    {"label": "Delete Class", "value": 3},
-                ],
-                value=1,
-                style=styles.OFFCANVAS_ON_STYLE,
-            ),
-            html.Br(),
-            html.Hr(
-                style={'margin': '10px', 'width': '95%'}
-            ),
-            dbc.Input(
-                id='student-name',
-                placeholder="Enter New Student's Name...",
-                type="text",
-                style=styles.OFFCANVAS_OFF_STYLE,
-            ),
-            dbc.Button(
-                'Add Student',
-                id='add-student',
-                color='success',
-                className="me-1",
-                style=styles.OFFCANVAS_OFF_STYLE,
-                n_clicks=0
-            ),
-            dbc.Select(
-                id="select-a-student",
-                options=[],
-                style=styles.OFFCANVAS_OFF_STYLE,
-            ),
-            dbc.Button(
-                'Delete Student',
-                id='delete-student',
-                color='warning',
-                className="me-1",
-                style=styles.OFFCANVAS_OFF_STYLE,
-                n_clicks=0
-            ),
-            dbc.Button(
-                'Delete Class',
-                id='delete-class',
-                color='danger',
-                className="me-1",
-                style=styles.OFFCANVAS_OFF_STYLE,
-                n_clicks=0
-            ),
-            html.P(
-                id='action-confirm',
-                className="my-2",
-                style={'margin': '10px', 'width': '95%', 'textAlign': 'center'}
-            ),
-        ], id="offcanvas-adjust", title="Roster Database", is_open=False, placement='end', backdrop=True),
-    ])
-    return adjust_class
+    return offcanvas
 
 

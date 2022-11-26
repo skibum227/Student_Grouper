@@ -1,5 +1,3 @@
-
-
 # My libraries
 from grouper import Grouper
 from plotter import Plotter
@@ -18,7 +16,7 @@ from dash import (Input,
                   html,
                   ctx)
     
-# Easy healthcheck...
+# Easy healthcheck imports
 from healthcheck import HealthCheck, EnvironmentDump
 
 # All other imports
@@ -361,7 +359,6 @@ def make_changes(class_value, student_name, student_value, n_clicks_as, n_clicks
     else:
         msg = ''
     return msg
-
 
 
 if __name__ == "__main__":

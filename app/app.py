@@ -24,7 +24,7 @@ import base64
 import io
 import json
 import pandas as pd
-import redis
+import boto3
 import secrets
 
 
@@ -51,7 +51,37 @@ prelim_student_roster = list(stu_dict[periods[0]].student_names.values)
 # All possible classes at PV
 all_class_names = {'0':'Period 1', '1':'Period 2', '2':'Period 3', '3':'Period 4', '4':'Period 5', '5':'Period 6'}
 # Connection to db for read/write
-database = redis.StrictRedis(host='127.0.0.1',port='6379',db=0,charset="utf-8",decode_responses=True)
+# Get the service resource.
+dynamodb = boto3.resource('dynamodb', endpoint_url='http://localhost:8000')
+table = dynamodb.Table('rosters')
+
+try:
+    table = dynamodb.create_table(
+        TableName='rosters',
+        KeySchema=[
+            {
+                'AttributeName': 'class_name',
+                'KeyType': 'HASH'
+            },
+        ],
+        AttributeDefinitions=[
+            {
+                'AttributeName': 'class_name',
+                'AttributeType': 'S'
+            },
+        ],
+        ProvisionedThroughput={
+            'ReadCapacityUnits': 25,
+            'WriteCapacityUnits': 25
+        }
+    )
+
+    # Wait until the table exists.
+    table.wait_until_exists()
+except:
+    print("db exists")
+
+table = dynamodb.Table('rosters')
 
 
 ########################
@@ -94,7 +124,7 @@ content_roster = core_components.content_roster_component(prelim_student_roster)
 content_table = core_components.content_table_component()
 
 # Build the roster tools
-roster_tools = roster_components.offcanvas_control(database, all_class_names)
+roster_tools = roster_components.offcanvas_control(table, all_class_names)
 
 ###############
 # Construct App
@@ -204,9 +234,10 @@ def render_page_content(pathname, period_selection, group_size, distribute_lefto
 def generate_csv(n_nlicks):
     if ctx.triggered_id == 'download_btn':
         roster_dict = {}
-        for x in database.keys():
-            roster = json.loads(database.get(x))
-            roster_dict[f'{all_class_names[x]}'] = roster
+
+        # Run through the classes to build the dict
+        for x in table.scan()['Items']:
+            roster_dict[f"{all_class_names[x['class_name']]}"] =  x['roster']
         roster_df = pd.DataFrame.from_dict(roster_dict, orient='index').transpose()
         return dcc.send_data_frame(roster_df.to_csv, filename="full_roster.csv")
 
@@ -240,12 +271,12 @@ def toggle_offcanvas(n1, n2, is_open_upload, is_open_adjust):
 def update_output(contents, filename,  n_clicks, value):
     # This enables the button and roster to work together
     if contents is not None:
-        roster_df = parse_contents(contents, filename)
+        roster_df = roster_components.parse_contents(contents, filename)
 
-        roster_table = build_roster_table(roster_df)
+        roster_table = roster_components.build_roster_table(roster_df)
 
         if ctx.triggered_id == 'submit-upload' and value:
-            save_df_to_database(roster_df, value)
+            roster_components.save_roster_to_database(value, roster_df)
             msg = f'{all_class_names[value]} has been saved'
         else:
             msg = ''
@@ -261,7 +292,7 @@ def update_output(contents, filename,  n_clicks, value):
 )
 def get_loaded_classes(value):
 
-    sorted_keys = database.keys()
+    sorted_keys = roster_components.get_all_classes(table)
     sorted_keys.sort()
     return [{'value':x, 'label':all_class_names[x]} for x in sorted_keys]
 
@@ -272,7 +303,7 @@ def get_loaded_classes(value):
 )
 def get_student_names(class_index):
     if class_index:
-        roster = json.loads(database.get(class_index))
+        roster = table.get_item(Key={'class_name':class_index})['Item']['roster']
         return [{"label": x, "value": f'{i}'} for i,x in enumerate(roster)]
     return []
 
@@ -334,27 +365,30 @@ def make_changes(class_value, student_name, student_value, n_clicks_as, n_clicks
 
     if ctx.triggered_id == 'add-student' and class_value is not None and student_name is not None:
         # Get the roster
-        roster = json.loads(database.get(class_value))
+        roster = table.get_item(Key={'class_name':class_value})['Item']
         # Add the name
-        roster.append(student_name)
-        # Save it!
-        database[class_value] = json.dumps(roster)
+        roster['roster'].append(student_name)
+
+        table.delete_item(Key={'class_name':class_value})
+        table.put_item(Item=roster)
 
         msg = f'{student_name} has been added to {all_class_names[class_value]}!'
 
     elif ctx.triggered_id == 'delete-student' and class_value is not None and student_value is not None:
         # Get the roster
-        roster = json.loads(database.get(class_value))
+        roster = table.get_item(Key={'class_name':class_value})['Item']
+
         # Remove the name
-        name = roster[int(student_value)]
-        roster.pop(int(student_value))
-        # Save it!
-        database[class_value] = json.dumps(roster)
+        name = roster['roster'][int(student_value)]
+        roster['roster'].pop(int(student_value))
+
+        table.delete_item(Key={'class_name':class_value})
+        table.put_item(Item=roster)
 
         msg = f'{name} has been removed from {all_class_names[class_value]}!'
 
     elif ctx.triggered_id == 'delete-class' and class_value is not None:
-        database.delete(class_value)
+        table.delete_item(Key={'class_name':class_value})
         msg = f'{all_class_names[class_value]} has been deleted!'
     else:
         msg = ''

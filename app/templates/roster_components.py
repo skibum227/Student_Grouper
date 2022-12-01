@@ -13,7 +13,7 @@ import pandas as pd
 
 def current_availible_classes(database, all_class_names):
     # Simply returns all possible classes for initialization of app
-    sorted_keys = database.keys()
+    sorted_keys = get_all_classes(database)
     sorted_keys.sort()
     return [{'value':x, 'label':all_class_names[x]} for x in sorted_keys]
 
@@ -36,10 +36,16 @@ def parse_contents(contents, filename):
         ])
     return df
 
-def save_df_to_database(df, name, database):
+def save_roster_to_database(class_name, df):
     # Takes input value and saves to the database with key
-    data = json.dumps(df.student_names.tolist())
-    database[name] = data
+    data_dict = {}
+    df.student_names.tolist()
+    data_dict['roster'] = df.student_names.tolist()
+    data_dict['class_name'] = class_name
+    table.put_item(Item=data_dict)
+
+def get_all_classes(database):
+    return [x['class_name'] for x in database.scan()['Items']]
 
 def build_roster_table(df):
     # Creates the output table for the uploaded class

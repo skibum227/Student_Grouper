@@ -9,12 +9,7 @@ import templates.roster_components as roster_components
 import dash
 import dash_bootstrap_components as dbc
 import dash_daq as daq
-from dash import (Input,
-                  Output,
-                  State,
-                  dcc,
-                  html,
-                  ctx)
+from dash import Input, Output, State, dcc, html, ctx
     
 # Easy healthcheck imports
 from healthcheck import HealthCheck, EnvironmentDump
@@ -276,7 +271,7 @@ def update_output(contents, filename,  n_clicks, value):
         roster_table = roster_components.build_roster_table(roster_df)
 
         if ctx.triggered_id == 'submit-upload' and value:
-            roster_components.save_roster_to_database(value, roster_df)
+            roster_components.save_roster_to_database(table, value, roster_df)
             msg = f'{all_class_names[value]} has been saved'
         else:
             msg = ''
@@ -330,7 +325,7 @@ def display_actions(action, class_name):
         return (
             styles.OFFCANVAS_OFF_STYLE,
             styles.OFFCANVAS_OFF_STYLE,
-            styles.OFFCANVAS_OFF_STYLE,
+            styles.OFFCANVAS_ON_STYLE,
             styles.OFFCANVAS_ON_STYLE,
             styles.OFFCANVAS_OFF_STYLE
         )

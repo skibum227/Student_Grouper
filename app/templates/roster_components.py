@@ -36,7 +36,7 @@ def parse_contents(contents, filename):
         ])
     return df
 
-def save_roster_to_database(class_name, df):
+def save_roster_to_database(table, class_name, df):
     # Takes input value and saves to the database with key
     data_dict = {}
     df.student_names.tolist()

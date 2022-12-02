@@ -45,7 +45,12 @@ def sidebar_component(name, subtitle):
     return sidebar
 
 
-def content_params_component(periods):
+def content_params_component(database, all_class_names, periods):
+
+    # Get all the classes
+    sorted_keys = [x['class_name'] for x in database.scan()['Items']]
+    sorted_keys.sort()
+
     content_params = html.Div([
         dbc.Row(
             dbc.Col(
@@ -58,16 +63,20 @@ def content_params_component(periods):
         ),
         dbc.Row(
             dbc.Col(
-                dbc.RadioItems(
+                # dbc.RadioItems(
+                #     id="period_selection",
+                #     className="btn-group",
+                #     inputClassName="btn-check",
+                #     labelClassName="btn btn-outline-primary",
+                #     labelCheckedClassName="active",
+                #     options=[
+                #         {"label":f"Period {x.split('_')[1]}", "value":x} # +2 b/c periods start at 2
+                #     for i, x in enumerate(periods)],
+                #     value=periods[0],
+                # ),
+                dbc.Select(
                     id="period_selection",
-                    className="btn-group",
-                    inputClassName="btn-check",
-                    labelClassName="btn btn-outline-primary",
-                    labelCheckedClassName="active",
-                    options=[
-                        {"label":f"Period {x.split('_')[1]}", "value":x} # +2 b/c periods start at 2
-                    for i, x in enumerate(periods)],
-                    value=periods[0],
+                    options=[{'value':x, 'label':all_class_names[x]} for x in sorted_keys],
                 ),
                 width={'size': 10, 'offset': 0}
             ),

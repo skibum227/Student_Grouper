@@ -10,7 +10,7 @@ import dash
 import dash_bootstrap_components as dbc
 import dash_daq as daq
 from dash import Input, Output, State, dcc, html, ctx
-    
+
 # Easy healthcheck imports
 from healthcheck import HealthCheck, EnvironmentDump
 
@@ -45,39 +45,10 @@ prelim_student_roster = list(stu_dict[periods[0]].student_names.values)
 # This is for the roster adjustments...
 # All possible classes at PV
 all_class_names = {'0':'Period 1', '1':'Period 2', '2':'Period 3', '3':'Period 4', '4':'Period 5', '5':'Period 6'}
+
 # Connection to db for read/write
-# Get the service resource.
-dynamodb = boto3.resource('dynamodb', endpoint_url='http://localhost:8000')
-table = dynamodb.Table('rosters')
-
-try:
-    table = dynamodb.create_table(
-        TableName='rosters',
-        KeySchema=[
-            {
-                'AttributeName': 'class_name',
-                'KeyType': 'HASH'
-            },
-        ],
-        AttributeDefinitions=[
-            {
-                'AttributeName': 'class_name',
-                'AttributeType': 'S'
-            },
-        ],
-        ProvisionedThroughput={
-            'ReadCapacityUnits': 25,
-            'WriteCapacityUnits': 25
-        }
-    )
-
-    # Wait until the table exists.
-    table.wait_until_exists()
-except:
-    print("db exists")
-
-table = dynamodb.Table('rosters')
-
+dynamodb = boto3.resource('dynamodb', endpoint_url='http://localhost:8042')
+database = dynamodb.Table('rosters')
 
 ########################
 # HEALTH CHECK ENDPOINTS
@@ -101,33 +72,32 @@ server.add_url_rule("/healthcheck", "healthcheck", view_func=lambda: health.run(
 server.add_url_rule("/environment", "environment", view_func=lambda: envdump.run())
 
 
-################
-# APP core_components
-################
+#####################
+# APP Components
+#####################
 app.title = 'The Student Grouper'
 
-# Build the sidebar 
+# Build the sidebar
 sidebar = core_components.sidebar_component(title, subtitle)
 
 # Build the params content
-content_params = core_components.content_params_component(periods)
+content_params = core_components.content_params_component(database, all_class_names, periods)
 
 # Build the roster content
 content_roster = core_components.content_roster_component(prelim_student_roster)
 
-# Build the table content
-content_table = core_components.content_table_component()
+# Build the database content
+content_database = core_components.content_table_component()
 
 # Build the roster tools
-roster_tools = roster_components.offcanvas_control(table, all_class_names)
-
-###############
-# Construct App
-###############
+roster_tools = roster_components.offcanvas_control(database, all_class_names)
 
 # This puts the whole damn thing together
-app.layout = html.Div([dcc.Location(id="ip"), sidebar, roster_tools, content_params, content_roster, content_table]) 
+app.layout = html.Div([dcc.Location(id="ip"), sidebar, roster_tools, content_params, content_roster, content_database])
 
+############
+# Call Backs
+############
 @app.callback(
      Output(component_id="student_roster", component_property="children"),
      Output(component_id="grouper_table", component_property="children"),
@@ -144,7 +114,7 @@ app.layout = html.Div([dcc.Location(id="ip"), sidebar, roster_tools, content_par
 # maybe something liek main_page.render_page_content(stuffff)
 def render_page_content(pathname, period_selection, group_size, distribute_leftovers, student_roster):
 
-    # Generate the df for only the particular period 
+    # Generate the df for only the particular period
     df = pd.DataFrame(stu_dict[period_selection]).sort_values('student_names')
     # The list of student names
     student_names = df['student_names'].values.tolist()
@@ -162,7 +132,7 @@ def render_page_content(pathname, period_selection, group_size, distribute_lefto
 
         # This is the result of wanting it to look nice, each student is in a different object
         keys = [
-                    x["props"]["children"][0]["props"]["children"]["props"]["id"] 
+                    x["props"]["children"][0]["props"]["children"]["props"]["id"]
                     for x in student_roster
                ]
         values = [
@@ -197,11 +167,11 @@ def render_page_content(pathname, period_selection, group_size, distribute_lefto
                         'period': period_selection.split('_')[1],
                         'gps':group_size_adj,
                         'distrib_lo': True if distribute_leftovers == 1 else False,
-                     } 
+                     }
             # Run the grouping algorithm
             grouper = Grouper(params)
             df_gps = grouper.group_students()
-            # Create the table figure
+            # Create the database figure
             fig = Plotter(params, df_gps).plot_groups()
 
             return (
@@ -231,7 +201,7 @@ def generate_csv(n_nlicks):
         roster_dict = {}
 
         # Run through the classes to build the dict
-        for x in table.scan()['Items']:
+        for x in database.scan()['Items']:
             roster_dict[f"{all_class_names[x['class_name']]}"] =  x['roster']
         roster_df = pd.DataFrame.from_dict(roster_dict, orient='index').transpose()
         return dcc.send_data_frame(roster_df.to_csv, filename="full_roster.csv")
@@ -268,15 +238,15 @@ def update_output(contents, filename,  n_clicks, value):
     if contents is not None:
         roster_df = roster_components.parse_contents(contents, filename)
 
-        roster_table = roster_components.build_roster_table(roster_df)
+        roster_database = roster_components.build_roster_database(roster_df)
 
         if ctx.triggered_id == 'submit-upload' and value:
-            roster_components.save_roster_to_database(table, value, roster_df)
+            roster_components.save_roster_to_database(database, value, roster_df)
             msg = f'{all_class_names[value]} has been saved'
         else:
             msg = ''
 
-        return roster_table, msg
+        return roster_database, msg
 
     return None, None
 
@@ -286,8 +256,7 @@ def update_output(contents, filename,  n_clicks, value):
     Input('select-a-class', 'value')
 )
 def get_loaded_classes(value):
-
-    sorted_keys = roster_components.get_all_classes(table)
+    sorted_keys = roster_components.get_all_classes(database)
     sorted_keys.sort()
     return [{'value':x, 'label':all_class_names[x]} for x in sorted_keys]
 
@@ -298,7 +267,7 @@ def get_loaded_classes(value):
 )
 def get_student_names(class_index):
     if class_index:
-        roster = table.get_item(Key={'class_name':class_index})['Item']['roster']
+        roster = database.get_item(Key={'class_name':class_index})['Item']['roster']
         return [{"label": x, "value": f'{i}'} for i,x in enumerate(roster)]
     return []
 
@@ -360,30 +329,30 @@ def make_changes(class_value, student_name, student_value, n_clicks_as, n_clicks
 
     if ctx.triggered_id == 'add-student' and class_value is not None and student_name is not None:
         # Get the roster
-        roster = table.get_item(Key={'class_name':class_value})['Item']
+        roster = database.get_item(Key={'class_name':class_value})['Item']
         # Add the name
         roster['roster'].append(student_name)
 
-        table.delete_item(Key={'class_name':class_value})
-        table.put_item(Item=roster)
+        database.delete_item(Key={'class_name':class_value})
+        database.put_item(Item=roster)
 
         msg = f'{student_name} has been added to {all_class_names[class_value]}!'
 
     elif ctx.triggered_id == 'delete-student' and class_value is not None and student_value is not None:
         # Get the roster
-        roster = table.get_item(Key={'class_name':class_value})['Item']
+        roster = database.get_item(Key={'class_name':class_value})['Item']
 
         # Remove the name
         name = roster['roster'][int(student_value)]
         roster['roster'].pop(int(student_value))
 
-        table.delete_item(Key={'class_name':class_value})
-        table.put_item(Item=roster)
+        database.delete_item(Key={'class_name':class_value})
+        database.put_item(Item=roster)
 
         msg = f'{name} has been removed from {all_class_names[class_value]}!'
 
     elif ctx.triggered_id == 'delete-class' and class_value is not None:
-        table.delete_item(Key={'class_name':class_value})
+        database.delete_item(Key={'class_name':class_value})
         msg = f'{all_class_names[class_value]} has been deleted!'
     else:
         msg = ''

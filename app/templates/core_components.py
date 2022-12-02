@@ -50,6 +50,7 @@ def content_params_component(database, all_class_names, periods):
     # Get all the classes
     sorted_keys = [x['class_name'] for x in database.scan()['Items']]
     sorted_keys.sort()
+    #https://stackoverflow.com/questions/63502062/python-dash-refresh-page-not-updating-source-data
 
     content_params = html.Div([
         dbc.Row(
@@ -63,22 +64,11 @@ def content_params_component(database, all_class_names, periods):
         ),
         dbc.Row(
             dbc.Col(
-                # dbc.RadioItems(
-                #     id="period_selection",
-                #     className="btn-group",
-                #     inputClassName="btn-check",
-                #     labelClassName="btn btn-outline-primary",
-                #     labelCheckedClassName="active",
-                #     options=[
-                #         {"label":f"Period {x.split('_')[1]}", "value":x} # +2 b/c periods start at 2
-                #     for i, x in enumerate(periods)],
-                #     value=periods[0],
-                # ),
                 dbc.Select(
                     id="period_selection",
                     options=[{'value':x, 'label':all_class_names[x]} for x in sorted_keys],
                 ),
-                width={'size': 10, 'offset': 0}
+                width={'size': 8, 'offset': 0}
             ),
         ),
         html.Br(),

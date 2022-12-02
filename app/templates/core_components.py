@@ -45,7 +45,7 @@ def sidebar_component(name, subtitle):
     return sidebar
 
 
-def content_params_component(database, all_class_names, periods):
+def content_params_component(database, all_class_names):
 
     # Get all the classes
     sorted_keys = [x['class_name'] for x in database.scan()['Items']]

@@ -4,7 +4,7 @@ import boto3
 # docker run -p 8000:8000 amazon/dynamodb-local
 
 def bring_db_up():
-    dynamodb = boto3.resource('dynamodb', endpoint_url='http://localhost:8000')
+    dynamodb = boto3.resource('dynamodb', endpoint_url='http://localhost:8042')
     try:
         table = dynamodb.create_table(
             TableName='rosters',
@@ -28,6 +28,7 @@ def bring_db_up():
 
         # Wait until the table exists.
         table.wait_until_exists()
+        print("table created")
     except:
         print("db exists")
 

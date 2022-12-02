@@ -38,8 +38,6 @@ server = app.server
 
 title = 'Student Grouper'
 subtitle = 'Room 253'
-stu_dict = pd.read_excel("student_ledger.xlsx", sheet_name=None)
-periods = list(stu_dict.keys())
 
 # This is for the roster adjustments...
 # All possible classes at PV
@@ -90,7 +88,7 @@ app.title = 'The Student Grouper'
 sidebar = core_components.sidebar_component(title, subtitle)
 
 # Build the params content
-content_params = core_components.content_params_component(database, all_class_names, periods)
+content_params = core_components.content_params_component(database, all_class_names)
 
 # Build the roster content
 content_roster = core_components.content_roster_component(prelim_student_roster)

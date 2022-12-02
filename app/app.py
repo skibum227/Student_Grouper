@@ -40,11 +40,20 @@ title = 'Student Grouper'
 subtitle = 'Room 253'
 stu_dict = pd.read_excel("student_ledger.xlsx", sheet_name=None)
 periods = list(stu_dict.keys())
-prelim_student_roster = list(stu_dict[periods[0]].student_names.values)
 
 # This is for the roster adjustments...
 # All possible classes at PV
-all_class_names = {'0':'Period 1', '1':'Period 2', '2':'Period 3', '3':'Period 4', '4':'Period 5', '5':'Period 6'}
+all_class_names = {'0':'Period 1',
+                   '1':'Period 2',
+                   '2':'Period 3',
+                   '3':'Period 4',
+                   '4':'Period 5',
+                   '5':'Period 5-6',
+                   '6':'Period 6',
+                   '7':'Period 9',
+                   '8':'Period 10'}
+
+prelim_student_roster = all_class_names.values()
 
 # Connection to db for read/write
 dynamodb = boto3.resource('dynamodb', endpoint_url='http://localhost:8042')
@@ -98,6 +107,17 @@ app.layout = html.Div([dcc.Location(id="ip"), sidebar, roster_tools, content_par
 ############
 # Call Backs
 ############
+
+# Enables selecting a class to update
+@app.callback(
+    Output('period_selection', 'options'),
+    Input('period_selection', 'value')
+)
+def get_loaded_classes(value):
+    sorted_keys = roster_components.get_all_classes(database)
+    sorted_keys.sort()
+    return [{'value':x, 'label':all_class_names[x]} for x in sorted_keys]
+
 @app.callback(
      Output(component_id="student_roster", component_property="children"),
      Output(component_id="grouper_table", component_property="children"),
@@ -112,12 +132,18 @@ app.layout = html.Div([dcc.Location(id="ip"), sidebar, roster_tools, content_par
      Input(component_id="student_roster", component_property="children")
 )
 # maybe something liek main_page.render_page_content(stuffff)
-def render_page_content(pathname, period_selection, group_size, distribute_leftovers, student_roster):
+def render_page_content(pathname, period_index, group_size, distribute_leftovers, student_roster):
 
     # Generate the df for only the particular period
-    df = pd.DataFrame(stu_dict[period_selection]).sort_values('student_names')
-    # The list of student names
-    student_names = df['student_names'].values.tolist()
+    if period_index:
+        period_selection = all_class_names[period_index]
+        roster = database.get_item(Key={'class_name':period_index})['Item']
+        df = pd.DataFrame(roster).rename(columns={'roster':'student_names'})
+        student_names = df['student_names'].values.tolist()
+
+    else:
+        student_names=[]
+        period_selection=None
 
     if pathname in ["/parameters", "/"]: # Left the old one on purpose
         return (
@@ -164,7 +190,7 @@ def render_page_content(pathname, period_selection, group_size, distribute_lefto
             # Create the input params for the grouping and plotting algorithms
             params = {
                         'student_df': df,
-                        'period': period_selection.split('_')[1],
+                        'period': period_selection,#.split('_')[1],
                         'gps':group_size_adj,
                         'distrib_lo': True if distribute_leftovers == 1 else False,
                      }
@@ -238,7 +264,7 @@ def update_output(contents, filename,  n_clicks, value):
     if contents is not None:
         roster_df = roster_components.parse_contents(contents, filename)
 
-        roster_database = roster_components.build_roster_database(roster_df)
+        roster_database = roster_components.build_roster_table(roster_df)
 
         if ctx.triggered_id == 'submit-upload' and value:
             roster_components.save_roster_to_database(database, value, roster_df)

@@ -9,7 +9,7 @@ build-aws:
 run: 
 	@echo 'Running the container...'
 	@docker-compose -f docker-compose.yml up -d
-	@python ./testing/initialize_db.py
+	@AWS_PROFILE=personal python ./testing/initialize_db.py
 
 kill: 
 	@echo 'Bringing it down...'

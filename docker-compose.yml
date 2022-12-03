@@ -1,4 +1,3 @@
-
 version: '3.7'
 services:
   app:
@@ -11,6 +10,7 @@ services:
     hostname: 0.0.0.0
     volumes:
       - ./app:/app
+      - $HOME/.aws/:/root/.aws/:ro
 
   dynamodb:
     image: amazon/dynamodb-local

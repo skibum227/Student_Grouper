@@ -21,6 +21,7 @@ import json
 import pandas as pd
 import boto3
 import secrets
+import os
 
 
 ################
@@ -54,7 +55,11 @@ all_class_names = {'0':'Period 1',
 prelim_student_roster = all_class_names.values()
 
 # Connection to db for read/write
-dynamodb = boto3.resource('dynamodb', endpoint_url='http://localhost:8042')
+os.environ['AWS_PROFILE'] = "personal"
+# if local
+#dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8042")
+# if containerized
+dynamodb = boto3.resource('dynamodb', endpoint_url="http://dynamodb:8000")
 database = dynamodb.Table('rosters')
 
 ########################

@@ -33,6 +33,27 @@ secret = secrets.token_urlsafe(32)
 app.secret_key = secret
 server = app.server
 
+########################
+# HEALTH CHECK ENDPOINTS
+########################
+
+health = HealthCheck()
+envdump = EnvironmentDump()
+
+def app_availible():
+    return True, "App good to go!"
+
+def application_data():
+    return {"maintainer": "Skibum Woodworks Web Development Division",
+            "git_repo": "https://github.com/skibum227/Student_Grouper"}
+
+health.add_check(app_availible)
+envdump.add_section("application", application_data)
+
+# Add a flask route to expose information
+server.add_url_rule("/healthcheck", "healthcheck", view_func=lambda: health.run())
+server.add_url_rule("/environment", "environment", view_func=lambda: envdump.run())
+
 ###############
 # APP CONSTANTS
 ###############
@@ -59,33 +80,8 @@ prelim_student_roster = all_class_names.values()
 # if local
 #dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8042")
 # if containerized
-print("here!!!!!!!!!!!!!!")
 dynamodb = boto3.resource('dynamodb', region_name="us-east-1")#, endpoint_url="http://dynamodb:8000")
-print("here2")
 database = dynamodb.Table('class_roster_storage')
-print('here3')
-print(database.key_schema)
-
-########################
-# HEALTH CHECK ENDPOINTS
-########################
-
-health = HealthCheck()
-envdump = EnvironmentDump()
-
-def app_availible():
-    return True, "App good to go!"
-
-def application_data():
-    return {"maintainer": "Skibum Woodworks Web Development Division",
-            "git_repo": "https://github.com/skibum227/Student_Grouper"}
-
-health.add_check(app_availible)
-envdump.add_section("application", application_data)
-
-# Add a flask route to expose information
-server.add_url_rule("/healthcheck", "healthcheck", view_func=lambda: health.run())
-server.add_url_rule("/environment", "environment", view_func=lambda: envdump.run())
 
 
 #####################

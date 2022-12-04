@@ -50,25 +50,13 @@ resource "aws_iam_policy" "dynamodb" {
   name        = "${var.resource_prefix}task-policy-dynamodb"
   description = "Policy that allows access to DynamoDB"
 
- policy = <<EOF
+  policy = <<EOF
 {
    "Version": "2012-10-17",
    "Statement": [
        {
            "Effect": "Allow",
-           "Action": [
-               "dynamodb:CreateTable",
-               "dynamodb:UpdateTimeToLive",
-               "dynamodb:PutItem",
-               "dynamodb:DescribeTable",
-               "dynamodb:ListTables",
-               "dynamodb:DeleteItem",
-               "dynamodb:GetItem",
-               "dynamodb:Scan",
-               "dynamodb:Query",
-               "dynamodb:UpdateItem",
-               "dynamodb:UpdateTable"
-           ],
+           "Action":["dynamodb:*"],
            "Resource": "*"
        }
    ]
@@ -78,6 +66,6 @@ EOF
 
 resource "aws_iam_role_policy_attachment" "ecs-task-role-policy-attachment" {
   for_each   = local.spec_map
-  role       ="${var.resource_prefix}${each.key}-task-role"
+  role       = "${var.resource_prefix}${each.key}-task-role"
   policy_arn = aws_iam_policy.dynamodb.arn
 }

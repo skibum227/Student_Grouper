@@ -67,7 +67,7 @@ class Plotter(object):
                 fill_color='white',
                 align='center',
                 height=45,
-                font=dict(color='black', size=40)
+                font=dict(color='black', size=30)
             ),
             cells=dict(
                 values=[df.student_names, df.student_group],
@@ -76,7 +76,7 @@ class Plotter(object):
                 line_color='black',
                 fill_color=[df.color],
                 height=40,
-                font=dict(color='black', size=30)
+                font=dict(color='black', size=25)
             ))
         ])
 

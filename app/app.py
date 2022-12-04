@@ -55,12 +55,16 @@ all_class_names = {'0':'Period 1',
 prelim_student_roster = all_class_names.values()
 
 # Connection to db for read/write
-os.environ['AWS_PROFILE'] = "personal"
+#os.environ['AWS_PROFILE'] = "personal"
 # if local
 #dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8042")
 # if containerized
-dynamodb = boto3.resource('dynamodb', endpoint_url="http://dynamodb:8000")
-database = dynamodb.Table('rosters')
+print("here!!!!!!!!!!!!!!")
+dynamodb = boto3.resource('dynamodb', region_name="us-east-1")#, endpoint_url="http://dynamodb:8000")
+print("here2")
+database = dynamodb.Table('class_roster_storage')
+print('here3')
+print(database.key_schema)
 
 ########################
 # HEALTH CHECK ENDPOINTS
@@ -157,7 +161,7 @@ def render_page_content(pathname, period_index, group_size, distribute_leftovers
                     styles.CONTENT_STYLE_OFF
                )
 
-    elif pathname in ("/roster", "/groups"):
+    elif pathname in ("/roster", "/groups") and period_index:
 
         # This is the result of wanting it to look nice, each student is in a different object
         keys = [
@@ -245,7 +249,6 @@ def generate_csv(n_nlicks):
      State("offcanvas-adjust", "is_open")],
 )
 def toggle_offcanvas(n1, n2, is_open_upload, is_open_adjust):
-    print(ctx.triggered_id)
     if ctx.triggered_id == 'offcanvas-upload-btn':
         return not is_open_upload, is_open_adjust
     elif ctx.triggered_id == 'offcanvas-adjust-btn':

@@ -25,6 +25,16 @@ module "endpoints" {
   version            = "3.7.0"
 
   endpoints = {
+    dynamodb = {
+      service             = "dynamodb"
+      service_type    = "Gateway"
+      #route_table_ids = module.vpc.private_route_table_ids
+      private_dns_enabled = true
+      subnet_ids          = module.vpc.private_subnets
+      tags = {
+        Name = "${var.resource_prefix}dynamodb-vpc-endpoint"
+      }
+    },
     s3 = {
       service         = "s3"
       service_type    = "Gateway"

@@ -105,7 +105,8 @@ content_database = core_components.content_table_component()
 roster_tools = roster_components.offcanvas_control(database, all_class_names)
 
 # This puts the whole damn thing together
-app.layout = html.Div([dcc.Location(id="ip"), sidebar, roster_tools, content_params, content_roster, content_database])
+#app.layout = html.Div([dcc.Location(id="ip"), sidebar, roster_tools, content_params, content_roster, content_database])
+app.layout = dbc.Container([dcc.Location(id="ip"), sidebar, roster_tools, content_params, content_roster, content_database], fluid="xxl")
 
 ############
 # Call Backs

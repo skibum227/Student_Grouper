@@ -19,7 +19,7 @@ CONTENT_STYLE_ON = {
     "bottom": 0,
     "width": "55rem",
     "padding": '2rem 2rem',
-    "overflow-y": 'scroll'
+    "overflow-y": 'scroll',
 }
 
 # Main content block - off

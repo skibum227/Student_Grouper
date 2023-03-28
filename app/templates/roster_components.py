@@ -61,14 +61,14 @@ def build_roster_table(df):
 def offcanvas_control(database, all_class_names):
     offcanvas = html.Div([
         dbc.Row([dbc.Col([
-            dbc.Button("Upload a Roster", id="offcanvas-upload-btn", color='secondary', n_clicks=0, style={'margin': '10px', 'size':'3'})
-        ], width={'size':2})], justify='end'),
+            dbc.Button("Upload a Roster", id="offcanvas-upload-btn", color='secondary', n_clicks=0, style={'margin': '10px'})
+        ], width={'size':2, 'offset':10})]),
         dbc.Row([dbc.Col([
-            dbc.Button("Adjust a Roster", id="offcanvas-adjust-btn", color='secondary', n_clicks=0, style={'margin': '10px', 'size':'3'}),
-        ], width={'size':2})], justify='end'),
+            dbc.Button("Adjust a Roster", id="offcanvas-adjust-btn", color='secondary', n_clicks=0, style={'margin': '10px'}),
+        ], width={'size':2, 'offset':10})]),
         dbc.Row([dbc.Col([
-            dbc.Button("Download Roster", id='download_btn', href="data_file.txt", color="secondary", style={'margin': '10px', 'size':'3'}),
-        ], width={'size':2})], justify='end'),
+            dbc.Button("Download Roster", id='download_btn', href="data_file.txt", color="secondary", style={'margin': '10px'}),
+        ], width={'size':2, 'offset':10})]),
         dcc.Download(id="download"), # this just enables the download to occur, nothing is displayed
         dbc.Offcanvas([
             html.H3(
